@@ -3,7 +3,7 @@ isotopic-logging
 
 Mark and trace events in your log alike isotopic labeling.
 
-|Build Status| |Coverage Status| |PyPi package| |PyPi downloads|
+|Build Status| |Coverage Status| |Quality| |PyPi package| |PyPi downloads|
 
 
 **Table of contents**
@@ -46,6 +46,9 @@ Changelog
    :target: https://coveralls.io/r/oblalex/isotopic-logging?branch=master
 .. |PyPi package| image:: http://img.shields.io/pypi/v/isotopic-logging.svg?style=flat
    :target: http://badge.fury.io/py/isotopic-logging/
+.. |Quality| image:: https://scrutinizer-ci.com/g/oblalex/isotopic-logging/badges/quality-score.png?b=master&style=flat
+   :target: https://scrutinizer-ci.com/g/oblalex/isotopic-logging/?branch=master
+   :alt: Scrutinizer Code Quality
 .. |PyPi downloads| image::  http://img.shields.io/pypi/dm/isotopic-logging.svg?style=flat
    :target: https://crate.io/packages/isotopic-logging/
 

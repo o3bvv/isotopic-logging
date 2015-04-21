@@ -1,5 +1,4 @@
 behave
 coverage
 coveralls
-importlib
 scrutinizer-ocular

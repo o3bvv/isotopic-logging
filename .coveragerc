@@ -2,12 +2,14 @@
 parallel = True
 source = isotopic_logging
 omit =
-    */features/*
     isotopic_logging/version.py
+    */features/*
+    */tests/*
+    */usr/*
+    */site-packages/*
 
 [report]
 exclude_lines =
     pragma: no cover
     raise NotImplementedError
     pass
-    def __repr__

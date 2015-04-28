@@ -1,4 +1,6 @@
 behave
 coverage
 coveralls
+nose
+PyHamcrest
 scrutinizer-ocular

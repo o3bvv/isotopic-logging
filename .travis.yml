@@ -9,9 +9,9 @@ install:
   - pip install -r .travis-requirements.txt
   - pip install -e . --use-mirrors
 script:
-  - coverage run -m behave --no-capture
+  - nosetests --with-coverage --cover-erase --nocapture
+  - behave --no-capture
 after_success:
-  - coverage report -m
   - coveralls
   - ocular --data-file ".coverage" --config-file ".coveragerc"
 notifications:

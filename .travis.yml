@@ -12,6 +12,7 @@ script:
   - nosetests --with-coverage --cover-erase --nocapture
   - behave --no-capture
 after_success:
+  - coverage report -m
   - coveralls
   - ocular --data-file ".coverage" --config-file ".coveragerc"
 notifications:

@@ -4,3 +4,4 @@ coveralls
 nose
 PyHamcrest
 scrutinizer-ocular
+six

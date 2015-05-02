@@ -8,3 +8,4 @@ tools:
 filter:
     excluded_paths:
         - features/*
+        - tests/*

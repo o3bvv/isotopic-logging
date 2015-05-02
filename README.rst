@@ -3,8 +3,9 @@ isotopic-logging
 
 Mark and trace events in your log alike isotopic labeling.
 
-|Build Status| |Coverage Status| |Quality| |PyPi package| |PyPi downloads|
-|Python versions| |License|
+|PyPi package| |PyPi downloads| |Python versions| |License|
+
+|Build Status| |Coverage Status| |Quality|
 
 
 **Table of contents**

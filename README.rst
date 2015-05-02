@@ -24,9 +24,9 @@ everyday logging overhead.
 
 Often you need to **track in time** some operation which consists of different
 actions. Usually you enlog some information about those actions. And usually
-those actions do not happen close to each other your code. Instead they happen
-in different functions, modules or even packages. Considering this, you may
-end up with logs where it's difficult to distinguish a separate operation.
+those actions do not happen close to each other in your code. Instead, they may
+happen in different functions, modules or even packages. Considering this, you
+may end up with logs where it's difficult to distinguish a separate operation.
 And that's not good.
 
 Usual solution is to put some message about operation into log entries, e.g. to
@@ -50,11 +50,11 @@ messages for multiple times. For example:
         finally:
             LOG.info("{0} | fullstop".format(some_name))
 
-But, stop, hey, what's that smell? Yes, smells like copypasta spirit. And this
+Stop, hey, what's that smell? Yes, smells like copypasta spirit. And this
 makes your eyes hurt.
 
 Why this is ugly? Well, first of all, you need to follow same prefix pattern
-all the time and everywhere in your project (and nobody cares how big it is).
+all the time and everywhere in your project (and nobody cares how big is it).
 It's a big responsibility and it's up to you. For example, it may happen you
 put some extra space between prefix and message (or use another delimiter) and
 you may miss something while using ``grep`` or so.
@@ -161,9 +161,9 @@ formatting, we can keep our **code modular and cleaner**, we can
 provided by usage of context managers which store prefixes in a special manner.
 
 Having this, we are able to mark an operation by injection of a special
-harmless prefix and then see in log how operation is executed through the
-entire project's ecosystem. This is like `isotopic labeling`_. This is what I
-call **isotopic logging**.
+harmless prefix into it and then see in log how operation is executed through
+the entire project's ecosystem. This is like `isotopic labeling`_. This is what
+I call **isotopic logging**.
 
 Welcome aboard!
 

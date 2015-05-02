@@ -1,5 +1,4 @@
 [run]
-parallel = True
 source = isotopic_logging
 omit =
     isotopic_logging/version.py

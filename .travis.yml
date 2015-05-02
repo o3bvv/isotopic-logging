@@ -10,9 +10,8 @@ install:
   - pip install -e . --use-mirrors
 script:
   - behave --no-capture
-  - coverage run `which nosetests` --nocapture
+  - nosetests --with-coverage --cover-erase --nocapture
 after_success:
-  - coverage report -m
   - coveralls
   - ocular --data-file ".coverage" --config-file ".coveragerc"
 notifications:

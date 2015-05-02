@@ -9,25 +9,30 @@ Feature: generate operation ID
   I want to have a control over ID formation process
   So that it can be customized without changing code
 
+
   Scenario: ID default type
     Given   default generator with default parameters
     When    I ask for a single ID
-    Then    ID type must be string
+    Then    ID must be a string
+
 
   Scenario: ID default length
     Given   default generator with default parameters
     When    I ask for a single ID
     Then    ID length must be equal to 6
 
+
   Scenario: ID custom length
     Given   default generator with length 10
     When    I ask for a single ID
     Then    ID length must be equal to 10
 
+
   Scenario: ID custom length greater than max length
     Given   default generator with length 1000
     When    I ask for a single ID
     Then    ID length must be equal to 32
+
 
   Scenario: unique values
     Given   there are 100 different default generators

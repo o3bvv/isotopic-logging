@@ -1,28 +1,30 @@
 # -*- coding: utf-8 -*-
 
-from contextlib import contextmanager
+from .context import injection_context
+from .generators import default_oid_generator
+from .injectors import PrefixInjector
+from .prefix import make_prefix, join_prefix
 
 
-class PrefixInjector(object):
-
-    def __init__(self, details):
-        self._prefix = self._get_prefix(details)
-
-    @staticmethod
-    def _get_prefix(details):
-        prefix = ["smth", ]
-
-        if details:
-            prefix.append(details)
-
-        prefix.append("")
-
-        return " | ".join(prefix)
-
-    def mark(self, message):
-        return self._prefix + message
+def direct_injector(prefix, container=None):
+    injector = PrefixInjector(prefix)
+    return injection_context(injector, container)
 
 
-@contextmanager
-def prefix_injector(details=None):
-    yield PrefixInjector(details)
+def prefix_injector(prefix, delimiter=None, container=None):
+    prefix = make_prefix(prefix, delimiter)
+    injector = PrefixInjector(prefix)
+    return injection_context(injector, container)
+
+
+def autoprefix_injector(oid_generator=None, delimiter=None, container=None):
+    autopart = (oid_generator or default_oid_generator)()
+    return prefix_injector(autopart, delimiter, container)
+
+
+def hybrid_injector(prefix, oid_generator=None, delimiter=None,
+                    container=None):
+    autopart = (oid_generator or default_oid_generator)()
+    prefix = join_prefix([autopart, prefix, ], delimiter)
+    injector = PrefixInjector(prefix)
+    return injection_context(injector, container)

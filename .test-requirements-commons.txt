@@ -1,7 +1,6 @@
 behave
 coverage
-coveralls
+mock
 nose
 PyHamcrest
-scrutinizer-ocular
 six

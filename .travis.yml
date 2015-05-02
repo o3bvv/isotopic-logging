@@ -5,14 +5,13 @@ python:
   - '3.3'
   - '3.4'
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install -r .travis-requirements-2.6.txt; fi
-  - pip install -r .travis-requirements.txt
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install -r .test-requirements-2.6.txt; fi
+  - pip install -r .test-requirements.txt
   - pip install -e . --use-mirrors
 script:
   - nosetests --with-coverage --cover-erase --nocapture
   - behave --no-capture
 after_success:
-  - coverage report -m
   - coveralls
   - ocular --data-file ".coverage" --config-file ".coveragerc"
 notifications:

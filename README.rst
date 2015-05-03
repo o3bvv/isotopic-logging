@@ -65,11 +65,11 @@ each log message.
 And yes, it will be a pain to change the way prefix is formatted and delimited
 all over the project.
 
-Moreover, if you decide to have same prefix to be used in **nested functions**,
-then you will need to drag it through them. And this is a farewell to function
-semantics and reusable code. You will not be able to cache or memoize functions
-as well, because prefix may be constantly changing. In short, it's a recipe for
-a disaster. So, for example:
+Moreover, if you decide to have same prefix to be used in
+**nested function calls**, then you will need to drag it through them. And this
+is a farewell to function semantics and reusable code. You will not be able to
+cache or memoize functions as well, because prefix may be constantly changing.
+In short, it's a recipe for a disaster. So, for example:
 
 .. code-block:: python
 
@@ -98,8 +98,8 @@ log is written from multiple threads or sources.
 
 **As a developer** I want to store prefix in some context so that I do not need
 to format it per each call to logger and so that I can access it within nested
-functions without passing prefix to a function directly and screwing up its
-semantics.
+function calls without passing prefix to a function directly and screwing up
+its semantics.
 
 So, how that can look like? Personally I propose the
 **following alternatives**:
@@ -150,7 +150,7 @@ Second example and be rewritten as following:
             LOG.info(inj.mark("invoking some another action"))
 
 
-You can notice we do not pass **top-level prefix** into nested functions
+You can notice we do not pass **top-level prefix** into function calls
 directly. And this is good. Also, we specify default prefixes for them which is
 good again. This allows us to reuse those functions. We can even memoize them
 if we need.
@@ -181,19 +181,370 @@ Simply get it at `Cheese Shop`_:
 Usage
 -----
 
-    # TODO:
+The main concept of this library is to define a **prefix injector** once and
+then to ask it to **mark strings** in a same manner.
+
+The library provides several default prefix injectors which are described
+below.
+
+
+Direct injector
+~~~~~~~~~~~~~~~
+
+``direct_injector`` adds exactly that prefix to strings which you tell it:
+
+.. code-block:: python
+
+    from isotopic_logging import direct_injector
+
+    with direct_injector("foo") as inj:
+        print(inj.mark("bar"))
+        print(inj.mark("buz"))
+
+    # Output:
+    # "foobar"
+    # "foobuz"
+
+
+Prefix injector
+~~~~~~~~~~~~~~~
+
+``prefix_injector`` acts same way as ``direct_injector``, but in addition
+it puts a delimiter between prefix and target message:
+
+.. code-block:: python
+
+    from isotopic_logging import prefix_injector
+
+    with prefix_injector("foo") as inj:
+        print(inj.mark("bar"))
+        print(inj.mark("buz"))
+
+    # Output:
+    # "foo | bar"
+    # "foo | buz"
+
+As you see, default delimiter is ``" | "`` (space-pipe-space). You can change
+it to something own:
+
+.. code-block:: python
+
+    with prefix_injector("foo", delimiter="::") as inj:
+        print(inj.mark("bar"))
+        print(inj.mark("buz"))
+
+    # Output:
+    # "foo::bar"
+    # "foo::buz"
+
+
+Autoprefix injector
+~~~~~~~~~~~~~~~~~~~
+
+If you just want to mark your message somehow and you do not care about how it
+will be marked, then ``autoprefix_injector`` is at your service:
+
+.. code-block:: python
+
+    from isotopic_logging import autoprefix_injector
+
+    with autoprefix_injector() as inj:
+        print(inj.mark("foo"))
+        print(inj.mark("bar"))
+
+    with autoprefix_injector() as inj:
+        print(inj.mark("buz"))
+
+    # Output:
+    # "E340F3 | foo:
+    # "E340F3 | bar:
+    # "172077 | buz:
+
+Here we see that ``autoprefix_injector`` acts like ``prefix_injector``, but
+instead of predefined prefix it uses something else. This something else is
+called **operation ID** or ``OID``.
+
+You can use your own ``OID`` generator by passing it via ``oid_generator``
+argument (see section ``Customization`` -> ``Custom OID generators``).
+
+And, of course, you can set your own ``delimiter`` also.
+
+
+Hybrid injector
+~~~~~~~~~~~~~~~
+
+If you need to have some static prefix, but you want to make it a bit different
+per each operation, then you may use ``hybrid_injector``. It acts like
+``autoprefix_injector`` but allows you to have some static part as in case of
+simple ``prefix_injector``:
+
+.. code-block:: python
+
+    from isotopic_logging import hybrid_injector
+
+    with hybrid_injector("foo") as inj:
+        print(inj.mark("bar"))
+        print(inj.mark("buz"))
+
+    with hybrid_injector("foo") as inj:
+        print(inj.mark("qux"))
+
+    # Output:
+    # "EC9C6B | foo | bar"
+    # "EC9C6B | foo | buz"
+    # "59A8D6 | foo | qux"
+
+
+``hybrid_injector`` can have custom ``oid_generator`` and custom ``delimiter``
+as for previous injectors.
+
+
+Nested function calls
+~~~~~~~~~~~~~~~~~~~~~
+
+This is the sugar part of the library. Imagine, you need to execute a single
+operation passing through loosely-coupled or quite different pieces of code
+(functions, objects, modules, etc). Well, this can be easy enough.
+
+Say, you have some independent functions which log what they do:
+
+.. code-block:: python
+
+    def add(a, b):
+        with autoprefix_injector() as inj:
+            print(inj.mark(
+                "adding {a} to {b}"
+                .format(a=a, b=b)))
+
+            result = a + b
+
+            print(inj.mark(
+                "resulting into {0}".format(result)))
+
+            return result
+
+    def multiply(a, b):
+        with autoprefix_injector() as inj:
+            print(inj.mark(
+                "making production of {a} and {b}"
+                .format(a=a, b=b)))
+
+            result = a * b
+
+            print(inj.mark(
+                "resulting into {0}".format(result)))
+
+            return result
+
+You will get different prefixes if you run them separately:
+
+.. code-block:: python
+
+    add(1, 2)
+    # Output:
+    # "2C091F | adding 1 to 2"
+    # "2C091F | resulting into 3"
+    # 3
+
+    multiply(1, 2)
+    # Output:
+    # "A15D88 | making production of 1 and 2"
+    # "A15D88 | resulting into 2"
+    # 2
+
+And now let's define some funtion which aggregates both of that operations:
+
+.. code-block:: python
+
+    def add_and_multiply(a, b):
+        with autoprefix_injector() as inj:
+            print(inj.mark(
+                "adding and multiplying {a} with {b}..."
+                .format(a=a, b=b)))
+
+            result = (add(a, b), multiply(a, b))
+
+            print(inj.mark(
+                "end result is {0}".format(result)))
+
+            return result
+
+If we call it, we'll see that all prefixes are inherited from top-level
+function call:
+
+.. code-block:: python
+
+    add_and_multiply(1, 2)
+
+    # Output:
+    # "1543A0 | adding and multiplying 1 with 2..."
+    # "1543A0 | adding 1 to 2"
+    # "1543A0 | resulting into 3"
+    # "1543A0 | making production of 1 and 2"
+    # "1543A0 | resulting into 2"
+    # "1543A0 | end result is (3, 2)"
+    # (3, 2)
+
+Yay! There's no mess with passing prefixes inside other functions!
+
+This works not only with ``autoprefix_injector``: any type of prefix injectors
+will work pretty fine.
+
+
+Prefix transmission
+~~~~~~~~~~~~~~~~~~~
+
+Sometimes you may need to track some operation executed inside different
+processes. For examaple, you handle some HTTP request and then start some
+background job (say, via ``Celery``). In this case, you will need to pass
+your prefix to another process.
+
+Every injector has a ``prefix`` attribute, e.g.:
+
+.. code-block:: python
+
+    with autoprefix_injector() as inj:
+        print(inj.prefix)
+
+    # Output:
+    # "08C22E | "
+
+So, you are able to throw the prefix to a right place. How can you pick it up?
+Well, this is the main purpose that ``direct_injector`` was created for. Let's
+imitate prefix transmission:
+
+.. code-block:: python
+
+    from celery import shared_task
+    from mock import Mock
+
+
+    def add_view(request):
+        with autoprefix_injector() as inj:
+            username = request.user.username
+            x, y = request.data['x'], request.data['y']
+
+            LOG.info(inj.mark(
+                "user '{username}' visits add_view() with x={x} and y={y} as "
+                "arguments"
+                .format(username=username, x=x, y=y)))
+
+            add.async_apply((x, y, inj.prefix))
+
+
+    @shared_task
+    def add(x, y, _operation_prefix):
+        with direct_injector(_operation_prefix) as inj:
+            result =  x + y
+            LOG.info(inj.mark(
+                "{x} + {y} = {result}"
+                .format(x=x, y=y, result=result)))
+            return result
+
+
+    request = Mock(
+        user=Mock(username="abuser"),
+        data=dict(x=1, y=2),
+    )
+    add_view(request)
+
+    # Log output:
+    # "C71F3F | user 'abuser' visits add_view() with x=1 and y=2 as arguments"
+    # "C71F3F | 1 + 2 = 3"
 
 
 Customization
 -------------
 
-    # TODO:
+Custom OID generators
+~~~~~~~~~~~~~~~~~~~~~
+
+By default ``OID`` is created by ``default_oid_generator``:
+
+.. code-block:: python
+
+    from isotopic_logging.generators import default_oid_generator
+
+    for x in range(5):
+        print(next(default_oid_generator))
+
+    # Output:
+    # "9592BC"
+    # "58B974"
+    # "9E403B"
+    # "C180B2"
+    # "C9FE44"
+
+Default generator is an instance of ``isotopic_logging.generators.generate_uuid_based_oid``
+with default `OID_LENGTH`_.
+
+So, you can change the length of autogenerated prefix:
+
+.. code-block:: python
+
+    from isotopic_logging import autoprefix_injector
+    from isotopic_logging.generators import generate_uuid_based_oid
+
+    generator = generate_uuid_based_oid(12)
+
+    with autoprefix_injector(oid_generator=generator) as inj:
+        print(inj.mark("bar"))
+        print(inj.mark("buz"))
+
+    # Output:
+    # "B2092A6EE743 | bar"
+    # "B2092A6EE743 | buz"
 
 
-Trivia
-------
+Of course, you can define your own generator:
 
-    # TODO:
+.. code-block:: python
+
+    OID_LENGTH = 5
+    OID_FORMAT = "{{0:>0{length}}}".format(length=OID_LENGTH)
+    OID_MAX_VALUE = (10 ** OID_LENGTH) - 1
+
+    def generate_oid():
+        i = 0
+        while True:
+            yield OID_FORMAT.format(i)
+            i = 0 if i == OID_MAX_VALUE else i + 1
+
+    generator = generate_oid()
+
+    with autoprefix_injector(oid_generator=generator) as inj:
+        print(inj.mark("foo"))
+        print(inj.mark("bar"))
+
+    with autoprefix_injector(oid_generator=generator) as inj:
+        print(inj.mark("buz"))
+
+    # Output:
+    # "00000 | foo"
+    # "00000 | bar"
+    # "00001 | buz"
+
+
+If you do not want to bother yourself with passing generators each time, you
+can use the power of partials:
+
+.. code-block:: python
+
+    from functools import partial
+
+    custom_injector = partial(autoprefix_injector, oid_generator=generate_oid())
+
+    with custom_injector() as inj:
+        print(inj.mark("foo"))
+        print(inj.mark("bar"))
+
+    with custom_injector() as inj:
+        print(inj.mark("buz"))
+
+    # Output:
+    # "00000 | foo"
+    # "00000 | bar"
+    # "00001 | buz"
 
 
 Changelog
@@ -223,5 +574,7 @@ Changelog
 
 .. _Cheese Shop: https://pypi.python.org/pypi/isotopic-logging
 .. _Isotopic labeling: http://en.wikipedia.org/wiki/Isotopic_labeling
+
+.. _OID_LENGTH: https://github.com/oblalex/isotopic-logging/blob/master/isotopic_logging/defaults.py#L3
 
 .. _1.0.0: https://github.com/oblalex/isotopic-logging/releases/tag/v1.0.0

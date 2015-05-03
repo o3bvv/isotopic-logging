@@ -65,7 +65,7 @@ class InjectorsTestCase(unittest.TestCase):
 
         map(tester, itertools.permutations(args_map.keys()))
 
-    def test_prefix_preservation(self):
+    def test_prefix_transmission(self):
 
         def imaginary_function_in_another_thread_or_process(parent_prefix):
             with direct_injector(parent_prefix) as inj:

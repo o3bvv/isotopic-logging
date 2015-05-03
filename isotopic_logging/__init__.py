@@ -18,13 +18,13 @@ def prefix_injector(prefix, delimiter=None, container=None):
 
 
 def autoprefix_injector(oid_generator=None, delimiter=None, container=None):
-    autopart = (oid_generator or default_oid_generator)()
+    autopart = next(oid_generator or default_oid_generator)
     return prefix_injector(autopart, delimiter, container)
 
 
 def hybrid_injector(prefix, oid_generator=None, delimiter=None,
                     container=None):
-    autopart = (oid_generator or default_oid_generator)()
+    autopart = next(oid_generator or default_oid_generator)
     prefix = join_prefix([autopart, prefix, ], delimiter)
     injector = PrefixInjector(prefix)
     return injection_context(injector, container)

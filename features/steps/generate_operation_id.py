@@ -6,22 +6,22 @@ from six import string_types
 from six.moves import range
 
 
-from isotopic_logging.generators import default_oid_generator_class
+from isotopic_logging.generators import generate_default_oid
 
 
 @given("default generator with default parameters")
 def step_given_default_generator_with_no_parameters(context):
-    context.generator = default_oid_generator_class()
+    context.generator = generate_default_oid()
 
 
 @given("default generator with length {length}")
 def step_given_default_generator_with_some_length(context, length):
-    context.generator = default_oid_generator_class(length=int(length))
+    context.generator = generate_default_oid(length=int(length))
 
 
 @when("I ask for a single ID")
 def step_when_ask_an_id(context):
-    context.oid = context.generator()
+    context.oid = next(context.generator)
 
 
 @then("ID must be a string")
@@ -37,7 +37,7 @@ def step_then_id_length_must_be_equal_to_a_number(context, number):
 @given("there are {number} different default generators")
 def step_given_a_number_of_default_generators(context, number):
     context.generators = [
-        default_oid_generator_class() for x in range(int(number))
+        generate_default_oid() for x in range(int(number))
     ]
 
 
@@ -47,7 +47,7 @@ def step_whe_ask_generators_for_ids(context, number):
 
     for generator in context.generators:
         context.results.extend([
-            generator() for x in range(int(number))
+            next(generator) for x in range(int(number))
         ])
 
 

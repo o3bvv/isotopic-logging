@@ -582,7 +582,7 @@ Changelog
 
 .. _OID_LENGTH: https://github.com/oblalex/isotopic-logging/blob/master/isotopic_logging/defaults.py#L3
 
-.. _#2: https://github.com/oblalex/isotopic-logging/issues/2
+.. _issue #2: https://github.com/oblalex/isotopic-logging/issues/2
 
 .. _1.0.1: https://github.com/oblalex/isotopic-logging/compare/v1.0.0...v1.0.1
 .. _1.0.0: https://github.com/oblalex/isotopic-logging/releases/tag/v1.0.0

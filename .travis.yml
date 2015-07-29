@@ -10,9 +10,11 @@ install:
   - pip install -e . --use-mirrors
 script:
   - behave --no-capture
-  - nosetests --with-coverage --cover-erase --nocapture
+  - nosetests --nocapture --with-cov --cov-report term-missing --cov isotopic_logging tests/
 after_success:
   - coveralls
   - ocular --data-file ".coverage" --config-file ".coveragerc"
 notifications:
   email: false
+  slack:
+    secure: FSe4nHo5MNmHNnKCx0DXZb0YI6LgPcQ1dg2maN3PatEODaboXiwKTfFmghdVPxERvT7voeCWtuvlirXzv9QuiGkopVcCdiV9vs0/VQQeLJEBT0wSc6unILe/2jSeuoLcYMa6PBcCmLh1kaILYnVxwjRIet/DHQPStXfLEd8/WUo=

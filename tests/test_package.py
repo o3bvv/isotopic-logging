@@ -8,7 +8,7 @@ from isotopic_logging import (
 )
 
 
-class InjectorsTestCase(unittest.TestCase):
+class PackageTestCase(unittest.TestCase):
 
     def test_direct_injector(self):
         with direct_injector("foo") as inj:

@@ -9,14 +9,9 @@ __here__ = os.path.abspath(os.path.dirname(__file__))
 
 README = open(os.path.join(__here__, 'README.rst')).read()
 
-# Get VERSION
-version_file = os.path.join('isotopic_logging', 'version.py')
-# Use exec for compabibility with Python 3
-exec(open(version_file).read())
-
 setup(
     name='isotopic-logging',
-    version=globals()['VERSION'],
+    version="1.0.1",
     description='Mark and trace events in your log alike isotopic labeling',
     long_description=README,
     keywords=[

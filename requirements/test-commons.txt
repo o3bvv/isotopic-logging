@@ -1,6 +1,6 @@
 behave
-coverage
 mock
 nose
+nose-cov
 PyHamcrest
 six

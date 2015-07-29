@@ -1,4 +1,0 @@
-coveralls
-scrutinizer-ocular
-
--r .test-requirements-commons.txt

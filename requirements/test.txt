@@ -1,0 +1,4 @@
+coveralls
+scrutinizer-ocular
+
+-r test-commons.txt

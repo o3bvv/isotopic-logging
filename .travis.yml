@@ -5,8 +5,8 @@ python:
   - '3.3'
   - '3.4'
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install -r .requirements/test-2.6.txt; fi
-  - pip install -r .requirements/test.txt
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install -r ./requirements/test-2.6.txt; fi
+  - pip install -r ./requirements/test.txt
   - pip install -e . --use-mirrors
 script:
   - behave --no-capture

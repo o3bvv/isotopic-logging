@@ -2,7 +2,6 @@
 
 import unittest
 
-
 from isotopic_logging.defaults import OID_LENGTH, OID_MAX_LENGTH
 from isotopic_logging.generators import generate_uuid_based_oid
 

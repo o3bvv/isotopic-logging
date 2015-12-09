@@ -18,3 +18,7 @@ def generate_uuid_based_oid(length=None):
 
 generate_default_oid = generate_uuid_based_oid
 default_oid_generator = threadsafe_iter(generate_default_oid())
+
+
+def generate_prefix(generator=None):
+    return next(generator or default_oid_generator)

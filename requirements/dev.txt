@@ -1,3 +1,4 @@
 tox
+bpython==0.13
 
--r test-commons.txt
+-r test.txt

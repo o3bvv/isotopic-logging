@@ -1,4 +1,6 @@
-coveralls
-scrutinizer-ocular
-
--r test-commons.txt
+behave
+mock
+nose
+nose-cov
+PyHamcrest
+six

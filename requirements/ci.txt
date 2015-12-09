@@ -1,0 +1,4 @@
+codecov
+scrutinizer-ocular
+
+-r test.txt

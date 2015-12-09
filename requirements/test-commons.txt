@@ -1,6 +1,0 @@
-behave
-mock
-nose
-nose-cov
-PyHamcrest
-six

@@ -1,18 +1,18 @@
+os:
+  - 'linux'
+sudo: false
 language: python
 python:
-  - '2.6'
   - '2.7'
-  - '3.3'
   - '3.4'
 install:
-  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install -r ./requirements/test-2.6.txt; fi
-  - pip install -r ./requirements/test.txt
-  - pip install -e . --use-mirrors
+  - pip install -r ./requirements/ci.txt
+  - pip install -e .
 script:
   - behave --no-capture
   - nosetests --nocapture --with-cov --cov-report term-missing --cov isotopic_logging tests/
 after_success:
-  - coveralls
+  - codecov
   - ocular --data-file ".coverage" --config-file ".coveragerc"
 notifications:
   email: false

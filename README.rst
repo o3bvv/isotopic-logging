@@ -1,11 +1,11 @@
 isotopic-logging
 ================
 
-Mark and trace events in your log alike isotopic labeling.
+|pypi_package| |pypi_downloads| |python_versions| |license|
 
-|PyPi package| |PyPi downloads| |Python versions| |License|
+|unix_build| |windows_build| |coverage_status|
 
-|Build Status| |Coverage Status| |Quality|
+|code_issues| |codeclimate| |codacy| |quality| |health| |requirements|
 
 
 **Table of contents**
@@ -560,21 +560,55 @@ Changelog
   Initial version
 
 
-.. |Build Status| image:: http://img.shields.io/travis/oblalex/isotopic-logging.svg?style=flat&branch=master
-   :target: https://travis-ci.org/oblalex/isotopic-logging
-.. |Coverage Status| image:: http://img.shields.io/coveralls/oblalex/isotopic-logging.svg?style=flat&branch=master
-   :target: https://coveralls.io/r/oblalex/isotopic-logging?branch=master
-.. |PyPi package| image:: http://img.shields.io/pypi/v/isotopic-logging.svg?style=flat
+.. |pypi_package| image:: http://img.shields.io/pypi/v/isotopic-logging.svg?style=flat
    :target: http://badge.fury.io/py/isotopic-logging/
-.. |Quality| image:: https://scrutinizer-ci.com/g/oblalex/isotopic-logging/badges/quality-score.png?b=master&style=flat
+   :alt: Latest PyPI package
+
+.. |pypi_downloads| image:: http://img.shields.io/pypi/dm/isotopic-logging.svg?style=flat
+   :target: https://crate.io/packages/isotopic-logging/
+   :alt: Downloands of latest PyPI package
+
+.. |python_versions| image:: https://img.shields.io/badge/Python-2.7,3.4-brightgreen.svg?style=flat
+   :alt: Supported versions of Python
+
+.. |license| image:: https://img.shields.io/badge/license-LGPLv3-blue.svg?style=flat
+   :target: https://github.com/oblalex/isotopic-logging/blob/master/LICENSE
+
+.. |unix_build| image:: http://img.shields.io/travis/oblalex/isotopic-logging.svg?style=flat&branch=master
+   :target: https://travis-ci.org/oblalex/isotopic-logging
+   :alt: Build status of the master branch on Unix
+
+.. |windows_build| image:: https://ci.appveyor.com/api/projects/status/hopk502wokd0qdyb/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/oblalex/isotopic-logging
+   :alt: Build status of the master branch on Windows
+
+.. |coverage_status| image:: http://codecov.io/github/oblalex/isotopic-logging/coverage.svg?branch=master
+   :target: http://codecov.io/github/oblalex/isotopic-logging?branch=master
+   :alt: Test coverage
+
+.. |code_issues| image:: https://www.quantifiedcode.com/api/v1/project/c5eb11f66c184f679d30b3e1b883ae6c/badge.svg
+   :target: https://www.quantifiedcode.com/app/project/c5eb11f66c184f679d30b3e1b883ae6c
+   :alt: Code issues
+
+.. |codeclimate| image:: https://codeclimate.com/github/oblalex/isotopic-logging/badges/gpa.svg
+   :target: https://codeclimate.com/github/oblalex/isotopic-logging
+   :alt: Code Climate
+
+.. |codacy| image:: https://api.codacy.com/project/badge/grade/802f334a292f45b2898d8777ad46b611
+   :target: https://www.codacy.com/app/oblalex/isotopic-logging
+   :alt: Codacy Code Review
+
+.. |quality| image:: https://scrutinizer-ci.com/g/oblalex/isotopic-logging/badges/quality-score.png?b=master&style=flat
    :target: https://scrutinizer-ci.com/g/oblalex/isotopic-logging/?branch=master
    :alt: Scrutinizer Code Quality
-.. |PyPi downloads| image::  http://img.shields.io/pypi/dm/isotopic-logging.svg?style=flat
-   :target: https://crate.io/packages/isotopic-logging/
-.. |Python versions| image:: https://img.shields.io/badge/Python-2.6,2.7,3.3,3.4-brightgreen.svg?style=flat
-   :alt: Supported versions of Python
-.. |License| image:: https://img.shields.io/badge/license-LGPLv3-blue.svg?style=flat
-   :target: https://github.com/oblalex/isotopic-logging/blob/master/LICENSE
+
+.. |health| image:: https://landscape.io/github/oblalex/isotopic-logging/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/oblalex/isotopic-logging/master
+   :alt: Code Health
+
+.. |requirements| image:: https://requires.io/github/oblalex/isotopic-logging/requirements.svg?branch=master
+   :target: https://requires.io/github/oblalex/isotopic-logging/requirements/?branch=master
+   :alt: Requirements Status
 
 
 .. _Cheese Shop: https://pypi.python.org/pypi/isotopic-logging

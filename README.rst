@@ -552,7 +552,7 @@ Changelog
 
 * `1.0.2`_ (*pending*)
 
-  * Feature: support of nested prefixes (`issue #1`_).
+  * Feature: support nested prefixes (`issue #1`_).
 
 * `1.0.1`_ (Jul 30, 2015)
 

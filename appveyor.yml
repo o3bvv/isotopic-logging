@@ -1,0 +1,20 @@
+# https://ci.appveyor.com/project/oblalex/isotopic-logging
+
+build: false # Not a C# project, build stuff at the test step instead.
+environment:
+  matrix:
+    - PYTHON: "C:/Python27"
+    - PYTHON: "C:/Python27-x64"
+    - PYTHON: "C:/Python34"
+    - PYTHON: "C:/Python34-x64"
+init:
+  - "ECHO %PYTHON%"
+  - ps: "ls C:/Python*"
+install:
+  - ps: (new-object net.webclient).DownloadFile('https://raw.github.com/pypa/pip/master/contrib/get-pip.py', 'C:/get-pip.py')
+  - "%PYTHON%/python.exe C:/get-pip.py"
+  - "%PYTHON%/Scripts/pip.exe install -r ./requirements/ci.txt"
+  - "%PYTHON%/Scripts/pip.exe install -e ."
+test_script:
+  - "%PYTHON%/Scripts/behave --no-capture"
+  - "%PYTHON%/Scripts/nosetests --nocapture --with-cov --cov-report term-missing --cov isotopic_logging tests/"

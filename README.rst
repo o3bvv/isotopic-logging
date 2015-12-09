@@ -550,9 +550,13 @@ can use the power of partials:
 Changelog
 ---------
 
+* `1.0.2`_ (*pending*)
+
+  * Feature: support of nested prefixes (`issue #1`_).
+
 * `1.0.1`_ (Jul 30, 2015)
 
-  * Fixed threading support for ``default_oid_generator`` which is used by
+  * Fix: threading support for ``default_oid_generator`` which is used by
     default by ``autoprefix_injector`` and ``hybrid_injector`` (`issue #2`_).
 
 * `1.0.0`_ (May 3, 2015)
@@ -616,7 +620,9 @@ Changelog
 
 .. _OID_LENGTH: https://github.com/oblalex/isotopic-logging/blob/master/isotopic_logging/defaults.py#L3
 
+.. _issue #1: https://github.com/oblalex/isotopic-logging/issues/1
 .. _issue #2: https://github.com/oblalex/isotopic-logging/issues/2
 
+.. _1.0.2: https://github.com/oblalex/isotopic-logging/compare/v1.0.1...v1.0.2
 .. _1.0.1: https://github.com/oblalex/isotopic-logging/compare/v1.0.0...v1.0.1
 .. _1.0.0: https://github.com/oblalex/isotopic-logging/releases/tag/v1.0.0

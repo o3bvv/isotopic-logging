@@ -6,7 +6,7 @@ from itertools import cycle
 
 from isotopic_logging.injectors import (
     DirectPrefixInjector, SimplePrefixInjector, AutoprefixInjector,
-    HybrydPrefixInjector,
+    HybrydPrefixInjector, merge_injectors,
 )
 
 from .utils import patch_default_generator
@@ -175,3 +175,12 @@ class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
             "bar:static:bravo",
         ]
         self.assert_injector(injector, expected)
+
+
+@patch_default_generator
+def test_merge_injectors():
+    i1 = AutoprefixInjector()
+    i2 = SimplePrefixInjector("suboperation")
+    i3 = AutoprefixInjector()
+    merged = merge_injectors(i1, i2, i3)
+    assert merged.prefix == "gen-1 | suboperation | gen-2 | "

@@ -35,3 +35,8 @@ class HybrydPrefixInjector(DirectPrefixInjector):
         autopart = generate_prefix(oid_generator)
         prefix = join_prefix([autopart, prefix, ], delimiter)
         super(HybrydPrefixInjector, self).__init__(prefix)
+
+
+def merge_injectors(*args):
+    prefix = ''.join([x.prefix for x in args])
+    return DirectPrefixInjector(prefix)

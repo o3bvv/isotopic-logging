@@ -1,42 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import mock
 import unittest
 
-from functools import wraps
 from itertools import cycle
 
 from isotopic_logging.injectors import (
     DirectPrefixInjector, SimplePrefixInjector, AutoprefixInjector,
 )
 
-
-def patch_default_generator(call):
-
-    def generate():
-        i = 1
-        while True:
-            yield "gen-%d" % i
-            i += 1
-
-    @wraps(call)
-    def decorator(*args, **kwargs):
-
-        mock_generator = generate()
-
-        def generate_prefix(generator=None):
-            return next(generator or mock_generator)
-
-        patcher = mock.patch("isotopic_logging.injectors.generate_prefix")
-        mock_generate_prefix = patcher.start()
-        mock_generate_prefix.side_effect = generate_prefix
-
-        try:
-            call(*args, **kwargs)
-        finally:
-            patcher.stop()
-
-    return decorator
+from .utils import patch_default_generator
 
 
 class InjectorTestCaseBase(unittest.TestCase):

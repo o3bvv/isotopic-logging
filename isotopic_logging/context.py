@@ -1,23 +1,34 @@
 # -*- coding: utf-8 -*-
 
+from collections import deque, namedtuple
 from threading import local
 
 
-_default_container = local()
+# TODO: use only default container, remove 'container' param
+_stack_holder = local()
+
+ScopeItem = namedtuple('ScopeItem', ['injector', 'parent'])
 
 
 class InjectionContext(object):
 
-    def __init__(self, injector, container=None):
-        self.container = container or _default_container
-        self.is_top_level_call = not hasattr(self.container, '_injector')
+    def __init__(self, injector, container=None, nested=False):
+        if not hasattr(_stack_holder, '_stack'):
+            _stack_holder._stack = deque()
+            self._create_new_scope(injector)
+        elif nested:
+            self._create_new_scope(injector)
 
-        if self.is_top_level_call:
-            self.container._injector = injector
+    def _create_new_scope(self, injector):
+        item = ScopeItem(injector, self)
+        _stack_holder._stack.append(item)
 
     def __enter__(self):
-        return self.container._injector
+        return _stack_holder._stack[-1].injector
 
     def __exit__(self, type, value, traceback):
-        if self.is_top_level_call:
-            del self.container._injector
+        if _stack_holder._stack[-1].parent is self:
+            _stack_holder._stack.pop()
+
+        if not _stack_holder._stack:
+            del _stack_holder._stack

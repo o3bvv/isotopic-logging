@@ -11,7 +11,7 @@ README = open(os.path.join(__here__, 'README.rst')).read()
 
 setup(
     name='isotopic-logging',
-    version="1.0.2",
+    version="1.1.0",
     description='Mark and trace events in your log alike isotopic labeling',
     long_description=README,
     keywords=[

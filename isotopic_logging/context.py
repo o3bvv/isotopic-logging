@@ -4,7 +4,6 @@ from collections import deque, namedtuple
 from threading import local
 
 
-# TODO: use only default container, remove 'container' param
 _stack_holder = local()
 
 ScopeItem = namedtuple('ScopeItem', ['injector', 'parent'])
@@ -12,7 +11,7 @@ ScopeItem = namedtuple('ScopeItem', ['injector', 'parent'])
 
 class InjectionContext(object):
 
-    def __init__(self, injector, container=None, nested=False):
+    def __init__(self, injector, nested=False):
         if not hasattr(_stack_holder, '_stack'):
             _stack_holder._stack = deque()
             self._create_new_scope(injector)

@@ -7,21 +7,21 @@ from .injectors import (
 )
 
 
-def direct_injector(prefix):
+def direct_injector(prefix, nested=False):
     injector = DirectPrefixInjector(prefix)
-    return InjectionContext(injector)
+    return InjectionContext(injector, nested)
 
 
-def prefix_injector(prefix, delimiter=None):
+def prefix_injector(prefix, delimiter=None, nested=False):
     injector = SimplePrefixInjector(prefix, delimiter)
-    return InjectionContext(injector)
+    return InjectionContext(injector, nested)
 
 
-def autoprefix_injector(oid_generator=None, delimiter=None):
+def autoprefix_injector(oid_generator=None, delimiter=None, nested=False):
     injector = AutoprefixInjector(oid_generator, delimiter)
-    return InjectionContext(injector)
+    return InjectionContext(injector, nested)
 
 
-def hybrid_injector(prefix, oid_generator=None, delimiter=None):
+def hybrid_injector(prefix, oid_generator=None, delimiter=None, nested=False):
     injector = HybrydPrefixInjector(prefix, oid_generator, delimiter)
-    return InjectionContext(injector)
+    return InjectionContext(injector, nested)

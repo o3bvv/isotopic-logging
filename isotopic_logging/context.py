@@ -3,32 +3,56 @@
 from collections import deque, namedtuple
 from threading import local
 
+from .injectors import merge_injectors
 
-_stack_holder = local()
 
-ScopeItem = namedtuple('ScopeItem', ['injector', 'parent'])
+StackItem = namedtuple('StackItem', ['injector', 'parent', ])
+
+
+class InjectionStack(object):
+
+    def __init__(self, local):
+        local.stack = deque()
+        self._local = local
+
+    def push(self, item):
+        self._local.stack.append(item)
+
+    def pop(self):
+        return self._local.stack.pop()
+
+    @property
+    def top(self):
+        try:
+            return self._local.stack[-1]
+        except IndexError:
+            return None
+
+    @property
+    def is_empty(self):
+        return not self._local.stack
+
+
+_local = local()
+_stack = InjectionStack(_local)
 
 
 class InjectionContext(object):
 
     def __init__(self, injector, inherit=False):
-        if not hasattr(_stack_holder, 'stack'):
-            _stack_holder.stack = deque()
-            self._create_new_scope(injector)
+        if _stack.is_empty:
+            self._push(injector)
         elif inherit:
-            # TODO: use new injector based on direct injector
-            self._create_new_scope(injector)
+            injector = merge_injectors(_stack.top.injector, injector)
+            self._push(injector)
 
-    def _create_new_scope(self, injector):
-        item = ScopeItem(injector, self)
-        _stack_holder.stack.append(item)
+    def _push(self, injector):
+        item = StackItem(injector, self)
+        _stack.push(item)
 
     def __enter__(self):
-        return _stack_holder.stack[-1].injector
+        return _stack.top.injector
 
     def __exit__(self, type, value, traceback):
-        if _stack_holder.stack[-1].parent is self:
-            _stack_holder.stack.pop()
-
-        if not _stack_holder.stack:
-            del _stack_holder.stack
+        if _stack.top.parent is self:
+            _stack.pop()

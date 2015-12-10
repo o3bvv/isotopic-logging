@@ -41,8 +41,14 @@ class InjectionContext(object):
 
     def __init__(self, injector, inherit=False):
         if _stack.is_empty:
+            if callable(injector):
+                injector = injector()
+
             self._push(injector)
         elif inherit:
+            if callable(injector):
+                injector = injector()
+
             injector = merge_injectors(_stack.top.injector, injector)
             self._push(injector)
 

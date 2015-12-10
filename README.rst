@@ -553,6 +553,7 @@ Changelog
 * `1.1.0`_ (*pending*)
 
   * Feature: support nested prefixes (`issue #1`_).
+  * Reduction: remove optional ``container`` parameter from everywhere.
 
 * `1.0.1`_ (Jul 30, 2015)
 

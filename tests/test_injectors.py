@@ -13,6 +13,10 @@ class InjectorTestCaseBase(unittest.TestCase):
         "bravo",
     ]
 
+    def assert_injector(self, injector, expected_strings):
+        result = list(map(injector.mark, self.strings))
+        self.assertEqual(result, expected_strings)
+
 
 class DirectPrefixInjectorTestCase(InjectorTestCaseBase):
 
@@ -22,8 +26,7 @@ class DirectPrefixInjectorTestCase(InjectorTestCaseBase):
             "foo > alpha",
             "foo > bravo",
         ]
-        result = list(map(injector.mark, self.strings))
-        self.assertEqual(result, expected)
+        self.assert_injector(injector, expected)
 
 
 class SimplePrefixInjectorTestCase(InjectorTestCaseBase):
@@ -34,8 +37,7 @@ class SimplePrefixInjectorTestCase(InjectorTestCaseBase):
             "foo | alpha",
             "foo | bravo",
         ]
-        result = list(map(injector.mark, self.strings))
-        self.assertEqual(result, expected)
+        self.assert_injector(injector, expected)
 
     def test_custom_delimiter(self):
         injector = SimplePrefixInjector("[foo]", delimiter=' ')
@@ -43,5 +45,4 @@ class SimplePrefixInjectorTestCase(InjectorTestCaseBase):
             "[foo] alpha",
             "[foo] bravo",
         ]
-        result = list(map(injector.mark, self.strings))
-        self.assertEqual(result, expected)
+        self.assert_injector(injector, expected)

@@ -3,7 +3,7 @@
 import uuid
 
 from .defaults import OID_LENGTH, OID_MAX_LENGTH
-from .utils import threadsafe_iter
+from .concurrency import threadsafe_iter
 
 
 def generate_uuid_based_oid(length=None):

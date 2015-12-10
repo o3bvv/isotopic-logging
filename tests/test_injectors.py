@@ -6,6 +6,7 @@ from itertools import cycle
 
 from isotopic_logging.injectors import (
     DirectPrefixInjector, SimplePrefixInjector, AutoprefixInjector,
+    HybrydPrefixInjector,
 )
 
 from .utils import patch_default_generator
@@ -110,5 +111,67 @@ class AutoprefixInjectorTestCase(InjectorTestCaseBase):
         expected = [
             "bar:alpha",
             "bar:bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+
+class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
+
+    @patch_default_generator
+    def test_all_parameters_are_default(self):
+        injector = HybrydPrefixInjector("static")
+        expected = [
+            "gen-1 | static | alpha",
+            "gen-1 | static | bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+        injector = HybrydPrefixInjector("static")
+        expected = [
+            "gen-2 | static | alpha",
+            "gen-2 | static | bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+    def test_generator_is_custom(self):
+        generator = cycle(["foo", "bar", ])
+
+        injector = HybrydPrefixInjector("static", generator)
+        expected = [
+            "foo | static | alpha",
+            "foo | static | bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+        injector = HybrydPrefixInjector("static", generator)
+        expected = [
+            "bar | static | alpha",
+            "bar | static | bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+    @patch_default_generator
+    def test_delimiter_is_custom(self):
+        injector = HybrydPrefixInjector("static", delimiter=':')
+        expected = [
+            "gen-1:static:alpha",
+            "gen-1:static:bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+    def test_all_parameters_are_custom(self):
+        generator = cycle(["foo", "bar", ])
+
+        injector = HybrydPrefixInjector("static", generator, delimiter=':')
+        expected = [
+            "foo:static:alpha",
+            "foo:static:bravo",
+        ]
+        self.assert_injector(injector, expected)
+
+        injector = HybrydPrefixInjector("static", generator, delimiter=':')
+        expected = [
+            "bar:static:alpha",
+            "bar:static:bravo",
         ]
         self.assert_injector(injector, expected)

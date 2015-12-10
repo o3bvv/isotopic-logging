@@ -21,20 +21,22 @@ class PackageTestCase(unittest.TestCase):
     def test_autoprefix_injector(self):
         with autoprefix_injector() as inj:
             string1 = inj.mark("foo")
+            self.assertTrue(string1.endswith(" | foo"))
 
         with autoprefix_injector() as inj:
             string2 = inj.mark("foo")
+            self.assertTrue(string2.endswith(" | foo"))
 
         self.assertNotEqual(string1, string2)
 
     def test_hybrid_injector(self):
         with hybrid_injector("something") as inj:
             string1 = inj.mark("foo")
-            self.assertTrue(" | something | " in string1)
+            self.assertTrue(string1.endswith(" | something | foo"))
 
         with hybrid_injector("something") as inj:
             string2 = inj.mark("foo")
-            self.assertTrue(" | something | " in string2)
+            self.assertTrue(string2.endswith(" | something | foo"))
 
         self.assertNotEqual(string1, string2)
 
@@ -67,7 +69,7 @@ class PackageTestCase(unittest.TestCase):
 
     def test_prefix_transmission(self):
 
-        def imaginary_function_in_another_thread_or_process(parent_prefix):
+        def suboperation_in_another_thread_or_process(parent_prefix):
             with direct_injector(parent_prefix) as inj:
                 return inj.mark("foo")
 
@@ -75,6 +77,6 @@ class PackageTestCase(unittest.TestCase):
             string1 = inj.mark("foo")
             prefix = inj.prefix
 
-        string2 = imaginary_function_in_another_thread_or_process(prefix)
+        string2 = suboperation_in_another_thread_or_process(prefix)
 
         self.assertEqual(string1, string2)

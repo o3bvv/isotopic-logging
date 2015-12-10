@@ -5,20 +5,22 @@ import unittest
 from isotopic_logging.injectors import DirectPrefixInjector
 
 
-class InjectorsTestCase(unittest.TestCase):
+class InjectorTestCaseBase(unittest.TestCase):
+    strings = [
+        "alpha",
+        "bravo",
+        "charlie",
+    ]
+
+
+class DirectPrefixInjectorTestCase(InjectorTestCaseBase):
 
     def test_direct_prefix_injector(self):
         injector = DirectPrefixInjector("foo > ")
-
-        strings = [
-            "alpha",
-            "bravo",
-            "charlie",
-        ]
         expected = [
             "foo > alpha",
             "foo > bravo",
             "foo > charlie",
         ]
-        result = list(map(injector.mark, strings))
+        result = list(map(injector.mark, self.strings))
         self.assertEqual(result, expected)

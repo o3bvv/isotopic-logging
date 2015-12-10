@@ -82,3 +82,75 @@ class PackageTestCase(unittest.TestCase):
         string2 = suboperation_in_another_thread_or_process(prefix)
 
         self.assertEqual(string1, string2)
+
+    @patch_default_generator
+    def test_scope_inheritance(self):
+        expected = [
+            "gen-1 | Operation has started",
+            "gen-1 | Nested call 1",
+            "gen-1 | Phase 1 | Phase 1 runs",
+            "gen-1 | Nested call 2",
+            "gen-1 | Phase 2 | Phase 2 has started",
+            "gen-1 | Phase 2 | Nested call 1 in phase 2",
+            "gen-1 | Phase 2 | gen-2 | Parallel remote task 1",
+            "gen-1 | Phase 2 | gen-3 | Parallel remote task 2",
+            "gen-1 | Phase 2 | gen-4 | Parallel remote task 3",
+            "gen-1 | Phase 2 | Nested call 2 in phase 2",
+            "gen-1 | Phase 2 | Phase 2 has finished",
+            "gen-1 | Nested call 3",
+            "gen-1 | Operation has finished",
+        ]
+        results = []
+
+        def operation():
+            with autoprefix_injector() as inj:
+                results.append(inj.mark("Operation has started"))
+                nested_call_1()
+                phase_1()
+                nested_call_2()
+                phase_2()
+                nested_call_3()
+                results.append(inj.mark("Operation has finished"))
+
+        def nested_call_1():
+            with autoprefix_injector() as inj:
+                results.append(inj.mark("Nested call 1"))
+
+        def phase_1():
+            with prefix_injector("Phase 1", inherit=True) as inj:
+                results.append(inj.mark("Phase 1 runs"))
+
+        def nested_call_2():
+            with autoprefix_injector() as inj:
+                results.append(inj.mark("Nested call 2"))
+
+        def phase_2():
+            with prefix_injector("Phase 2", inherit=True) as inj:
+                results.append(inj.mark("Phase 2 has started"))
+                phase_2_nested_call_1()
+
+                for n in [1, 2, 3]:
+                    phase_2_subphase(n)
+
+                phase_2_nested_call_2()
+                results.append(inj.mark("Phase 2 has finished"))
+
+        def phase_2_nested_call_1():
+            with autoprefix_injector() as inj:
+                results.append(inj.mark("Nested call 1 in phase 2"))
+
+        def phase_2_subphase(n):
+            with autoprefix_injector(inherit=True) as inj:
+                results.append(inj.mark(
+                    "Parallel remote task {0}".format(n)))
+
+        def phase_2_nested_call_2():
+            with autoprefix_injector() as inj:
+                results.append(inj.mark("Nested call 2 in phase 2"))
+
+        def nested_call_3():
+            with autoprefix_injector() as inj:
+                results.append(inj.mark("Nested call 3"))
+
+        operation()
+        self.assertEqual(expected, results)

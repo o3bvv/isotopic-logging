@@ -11,11 +11,11 @@ ScopeItem = namedtuple('ScopeItem', ['injector', 'parent'])
 
 class InjectionContext(object):
 
-    def __init__(self, injector, nested=False):
+    def __init__(self, injector, inherit=False):
         if not hasattr(_stack_holder, 'stack'):
             _stack_holder.stack = deque()
             self._create_new_scope(injector)
-        elif nested:
+        elif inherit:
             # TODO: use new injector based on direct injector
             self._create_new_scope(injector)
 

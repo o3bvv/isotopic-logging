@@ -10,6 +10,15 @@ class InjectorsTestCase(unittest.TestCase):
     def test_direct_prefix_injector(self):
         injector = DirectPrefixInjector("foo > ")
 
-        self.assertEqual(injector.mark("alpha"), "foo > alpha")
-        self.assertEqual(injector.mark("bravo"), "foo > bravo")
-        self.assertEqual(injector.mark("charlie"), "foo > charlie")
+        strings = [
+            "alpha",
+            "bravo",
+            "charlie",
+        ]
+        expected = [
+            "foo > alpha",
+            "foo > bravo",
+            "foo > charlie",
+        ]
+        result = list(map(injector.mark, strings))
+        self.assertEqual(result, expected)

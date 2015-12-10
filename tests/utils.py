@@ -7,17 +7,18 @@ from functools import wraps
 from isotopic_logging.concurrency import threadsafe_iter
 
 
-def patch_default_generator(call):
+def patched_generate():
+    i = 1
+    while True:
+        yield "gen-%d" % i
+        i += 1
 
-    def generate():
-        i = 1
-        while True:
-            yield "gen-%d" % i
-            i += 1
+
+def patch_default_generator(call):
 
     @wraps(call)
     def decorator(*args, **kwargs):
-        mock_generator = threadsafe_iter(generate())
+        mock_generator = threadsafe_iter(patched_generate())
 
         def generate_prefix(generator=None):
             return next(generator or mock_generator)

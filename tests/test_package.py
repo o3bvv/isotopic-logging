@@ -7,40 +7,42 @@ from isotopic_logging import (
     direct_injector, prefix_injector, autoprefix_injector, hybrid_injector,
 )
 
+from .utils import patch_default_generator
+
 
 class PackageTestCase(unittest.TestCase):
 
     def test_direct_injector(self):
         with direct_injector("foo") as inj:
-            self.assertEqual(inj.mark("bar"), "foobar")
+            s = inj.mark("bar")
+            self.assertEqual(s, "foobar")
 
     def test_prefix_injector(self):
         with prefix_injector("foo") as inj:
-            self.assertEqual(inj.mark("bar"), "foo | bar")
+            s = inj.mark("bar")
+            self.assertEqual(s, "foo | bar")
 
+    @patch_default_generator
     def test_autoprefix_injector(self):
         with autoprefix_injector() as inj:
-            string1 = inj.mark("foo")
-            self.assertTrue(string1.endswith(" | foo"))
+            s = inj.mark("foo")
+            self.assertEqual(s, "gen-1 | foo")
 
         with autoprefix_injector() as inj:
-            string2 = inj.mark("foo")
-            self.assertTrue(string2.endswith(" | foo"))
+            s = inj.mark("foo")
+            self.assertEqual(s, "gen-2 | foo")
 
-        self.assertNotEqual(string1, string2)
-
+    @patch_default_generator
     def test_hybrid_injector(self):
         with hybrid_injector("something") as inj:
-            string1 = inj.mark("foo")
-            self.assertTrue(string1.endswith(" | something | foo"))
+            s = inj.mark("foo")
+            self.assertEqual(s, "gen-1 | something | foo")
 
         with hybrid_injector("something") as inj:
-            string2 = inj.mark("foo")
-            self.assertTrue(string2.endswith(" | something | foo"))
+            s = inj.mark("foo")
+            self.assertEqual(s, "gen-2 | something | foo")
 
-        self.assertNotEqual(string1, string2)
-
-    def test_nested_injectors(self):
+    def test_nested_scopes_preserve_top_injector(self):
         args_map = {
             prefix_injector: ("foo", ),
             autoprefix_injector: (),
@@ -50,8 +52,8 @@ class PackageTestCase(unittest.TestCase):
         def new_injector(injector):
             return injector(*args_map[injector])
 
-        def tester(arg):
-            injector1, injector2, injector3 = arg
+        def tester(args):
+            injector1, injector2, injector3 = args
 
             with new_injector(injector1) as inj1:
                 string1 = inj1.mark("bar")

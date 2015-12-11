@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .generators import generate_prefix
+from .generators import generate_oid
 from .prefix import make_prefix, join_prefix
 
 
@@ -25,14 +25,14 @@ class SimplePrefixInjector(DirectPrefixInjector):
 class AutoprefixInjector(SimplePrefixInjector):
 
     def __init__(self, oid_generator=None, delimiter=None):
-        autopart = generate_prefix(oid_generator)
+        autopart = generate_oid(oid_generator)
         super(AutoprefixInjector, self).__init__(autopart, delimiter)
 
 
 class HybrydPrefixInjector(DirectPrefixInjector):
 
     def __init__(self, prefix, oid_generator=None, delimiter=None):
-        autopart = generate_prefix(oid_generator)
+        autopart = generate_oid(oid_generator)
         prefix = join_prefix([autopart, prefix, ], delimiter)
         super(HybrydPrefixInjector, self).__init__(prefix)
 

@@ -109,7 +109,7 @@ So, how that can look like? Personally I propose the
     # Better and cleaner way to mark log entries
 
     def some_operation(some_name):
-        with prefix_injector(some_name) as inj:
+        with static_injector(some_name) as inj:
             LOG.info(inj.mark("start"))
 
             try:
@@ -133,7 +133,7 @@ Second example and be rewritten as following:
     # Contactless prefix transmission which does no harm to your functions
 
     def another_operation(arg1, arg2):
-        with prefix_injector("somehow calculed prefix") as inj:
+        with static_injector("somehow calculed prefix") as inj:
             LOG.info(inj.mark("start"))
 
             some_action1(arg1, arg2)
@@ -209,14 +209,14 @@ Direct injector
 Prefix injector
 ~~~~~~~~~~~~~~~
 
-``prefix_injector`` acts same way as ``direct_injector``, but in addition
+``static_injector`` acts same way as ``direct_injector``, but in addition
 it puts a delimiter between prefix and target message:
 
 .. code-block:: python
 
-    from isotopic_logging import prefix_injector
+    from isotopic_logging import static_injector
 
-    with prefix_injector("foo") as inj:
+    with static_injector("foo") as inj:
         print(inj.mark("bar"))
         print(inj.mark("buz"))
 
@@ -229,7 +229,7 @@ it to something own:
 
 .. code-block:: python
 
-    with prefix_injector("foo", delimiter="::") as inj:
+    with static_injector("foo", delimiter="::") as inj:
         print(inj.mark("bar"))
         print(inj.mark("buz"))
 
@@ -260,7 +260,7 @@ will be marked, then ``autoprefix_injector`` is at your service:
     # "E340F3 | bar:
     # "172077 | buz:
 
-Here we see that ``autoprefix_injector`` acts like ``prefix_injector``, but
+Here we see that ``autoprefix_injector`` acts like ``static_injector``, but
 instead of predefined prefix it uses something else. This something else is
 called **operation ID** or ``OID``.
 
@@ -276,7 +276,7 @@ Hybrid injector
 If you need to have some static prefix, but you want to make it a bit different
 per each operation, then you may use ``hybrid_injector``. It acts like
 ``autoprefix_injector`` but allows you to have some static part as in case of
-simple ``prefix_injector``:
+simple ``static_injector``:
 
 .. code-block:: python
 
@@ -555,6 +555,12 @@ Changelog
   * Feature: support nested prefixes (`issue #1`_).
   * Optimization: instances of injectors will be created only if new scope is
     defined (`issue #5`_).
+  * Renaming:
+
+    - ``prefix_injector`` to ``static_injector``;
+    - ``autoprefix_injector`` to ``auto_injector``;
+
+    *Old names are preserved and still can be used*.
   * Reduction: remove optional ``container`` parameter from everywhere.
 
 * `1.0.1`_ (Jul 30, 2015)

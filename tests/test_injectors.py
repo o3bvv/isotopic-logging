@@ -5,7 +5,7 @@ import unittest
 from itertools import cycle
 
 from isotopic_logging.injectors import (
-    DirectPrefixInjector, SimplePrefixInjector, AutoprefixInjector,
+    DirectPrefixInjector, StaticPrefixInjector, AutoprefixInjector,
     HybrydPrefixInjector, merge_injectors,
 )
 
@@ -34,10 +34,10 @@ class DirectPrefixInjectorTestCase(InjectorTestCaseBase):
         self.assert_injector(injector, expected)
 
 
-class SimplePrefixInjectorTestCase(InjectorTestCaseBase):
+class StaticPrefixInjectorTestCase(InjectorTestCaseBase):
 
     def test_delimiter_is_default(self):
-        injector = SimplePrefixInjector("foo")
+        injector = StaticPrefixInjector("foo")
         expected = [
             "foo | alpha",
             "foo | bravo",
@@ -45,7 +45,7 @@ class SimplePrefixInjectorTestCase(InjectorTestCaseBase):
         self.assert_injector(injector, expected)
 
     def test_delimiter_is_custom(self):
-        injector = SimplePrefixInjector("foo", delimiter=":")
+        injector = StaticPrefixInjector("foo", delimiter=":")
         expected = [
             "foo:alpha",
             "foo:bravo",
@@ -180,7 +180,7 @@ class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
 @patch_default_generator
 def test_merge_injectors():
     i1 = AutoprefixInjector()
-    i2 = SimplePrefixInjector("suboperation")
+    i2 = StaticPrefixInjector("suboperation")
     i3 = AutoprefixInjector()
     merged = merge_injectors(i1, i2, i3)
     assert merged.prefix == "gen-1 | suboperation | gen-2 | "

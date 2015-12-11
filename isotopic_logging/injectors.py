@@ -15,14 +15,14 @@ class DirectPrefixInjector(object):
         return self.prefix + message
 
 
-class SimplePrefixInjector(DirectPrefixInjector):
+class StaticPrefixInjector(DirectPrefixInjector):
 
     def __init__(self, prefix, delimiter=None):
         prefix = make_prefix(prefix, delimiter)
-        super(SimplePrefixInjector, self).__init__(prefix)
+        super(StaticPrefixInjector, self).__init__(prefix)
 
 
-class AutoprefixInjector(SimplePrefixInjector):
+class AutoprefixInjector(StaticPrefixInjector):
 
     def __init__(self, oid_generator=None, delimiter=None):
         autopart = generate_oid(oid_generator)

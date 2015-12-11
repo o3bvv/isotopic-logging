@@ -4,7 +4,7 @@ from collections import deque, namedtuple
 from threading import local
 
 from .injectors import (
-    DirectPrefixInjector, SimplePrefixInjector, AutoprefixInjector,
+    DirectPrefixInjector, StaticPrefixInjector, AutoprefixInjector,
     HybrydPrefixInjector,
 )
 from .injectors import merge_injectors
@@ -74,13 +74,13 @@ def direct_injector(prefix, inherit=False):
         inherit)
 
 
-def prefix_injector(prefix, delimiter=None, inherit=False):
+def static_injector(prefix, delimiter=None, inherit=False):
     return InjectionContext(
-        lambda: SimplePrefixInjector(prefix, delimiter),
+        lambda: StaticPrefixInjector(prefix, delimiter),
         inherit)
 
 
-def autoprefix_injector(oid_generator=None, delimiter=None, inherit=False):
+def auto_injector(oid_generator=None, delimiter=None, inherit=False):
     return InjectionContext(
         lambda: AutoprefixInjector(oid_generator, delimiter),
         inherit)

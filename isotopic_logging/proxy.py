@@ -4,14 +4,21 @@ import logging
 
 from functools import wraps
 
-from ._compat import string_types
+from ._compat import PY3, string_types
 
 
-_wrapped_method_names = {
-    name.lower()
-    for name in logging._levelNames.keys()
-    if isinstance(name, string_types)
-}
+if PY3:
+    _wrapped_method_names = {
+        name.lower()
+        for name in logging._nameToLevel.keys()
+    }
+else:
+    _wrapped_method_names = {
+        name.lower()
+        for name in logging._levelNames.keys()
+        if isinstance(name, string_types)
+    }
+
 _wrapped_method_names.update({
     'exception',
 })

@@ -40,7 +40,7 @@ class LoggerProxy(object):
 
     def __init__(self, logger, injector):
         self._original = logger
-        self._injector = injector
+        self.injector = injector
 
     def __getattr__(self, name):
         """
@@ -57,7 +57,7 @@ class LoggerProxy(object):
 
             @wraps(result)
             def wrapper(message, *args, **kwargs):
-                return result(self._injector.mark(message), *args, **kwargs)
+                return result(self.injector.mark(message), *args, **kwargs)
 
             # Cache wrapper, so it won't be constructed again for future calls.
             setattr(self, name, wrapper)

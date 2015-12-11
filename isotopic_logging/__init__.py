@@ -8,4 +8,5 @@ from .context import static_injector as prefix_injector  # NOQA
 from .context import auto_injector as autoprefix_injector  # NOQA
 
 from .generators import generate_oid, default_oid_generator  # NOQA
+from .logger import IsotopicLogger # NOQA
 from .prefix import make_prefix, join_prefix  # NOQA

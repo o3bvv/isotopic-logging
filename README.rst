@@ -553,6 +553,8 @@ Changelog
 * `1.1.0`_ (*pending*)
 
   * Feature: support nested prefixes (`issue #1`_).
+  * Feature: simple and clean way to inject prefixes into calls to existing
+    loggers (`issue #4`_).
   * Optimization: instances of injectors will be created only if new scope is
     defined (`issue #5`_).
   * Renaming:
@@ -631,6 +633,7 @@ Changelog
 
 .. _issue #1: https://github.com/oblalex/isotopic-logging/issues/1
 .. _issue #2: https://github.com/oblalex/isotopic-logging/issues/2
+.. _issue #4: https://github.com/oblalex/isotopic-logging/issues/4
 .. _issue #5: https://github.com/oblalex/isotopic-logging/issues/5
 
 .. _1.1.0: https://github.com/oblalex/isotopic-logging/compare/v1.0.1...v1.1.0

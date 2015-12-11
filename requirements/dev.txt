@@ -1,4 +1,4 @@
 tox
-bpython==0.13
+bpython
 
 -r test.txt

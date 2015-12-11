@@ -17,7 +17,7 @@ _wrapped_method_names.update({
 })
 
 
-class InjectingLogger(object):
+class LoggerProxy(object):
     """
     Proxy for `logging.Logger` and classes inherited from it.
 

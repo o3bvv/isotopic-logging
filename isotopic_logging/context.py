@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from collections import deque, namedtuple
 from threading import local
 
@@ -61,11 +63,14 @@ class InjectionContext(object):
         _stack.push(item)
 
     def __enter__(self):
-        return _stack.top.injector
+        injector = _stack.top.injector
+        injector.enter_time = time.time()
+        return injector
 
     def __exit__(self, type, value, traceback):
         if _stack.top.parent is self:
-            _stack.pop()
+            item = _stack.pop()
+            item.injector.enter_time = None
 
 
 def direct_injector(prefix, inherit=False):

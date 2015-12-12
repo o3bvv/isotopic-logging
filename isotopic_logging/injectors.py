@@ -1,15 +1,25 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from .generators import generate_oid
 from .prefix import make_prefix, join_prefix
 
 
 class DirectPrefixInjector(object):
 
-    __slots__ = ['prefix', ]
+    __slots__ = ['prefix', 'enter_time', ]
 
     def __init__(self, prefix):
         self.prefix = prefix
+
+        # `enter_time` will be set by context manager
+        self.enter_time = None
+
+    @property
+    def elapsed_time(self):
+        if self.enter_time:
+            return time.time() - self.enter_time
 
     def mark(self, message):
         return self.prefix + message

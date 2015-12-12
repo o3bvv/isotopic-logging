@@ -555,8 +555,11 @@ Changelog
   * Feature: support nested prefixes (`issue #1`_).
   * Feature: simple and clean way to inject prefixes into calls to existing
     loggers (`issue #4`_).
+  * Feature: ability to get context execution time (`issue #3`_).
   * Optimization: instances of injectors will be created only if new scope is
     defined (`issue #5`_).
+  * Improvement: ensure prefix and target message are converted to strings
+    during concatenation.
   * Renaming:
 
     - ``prefix_injector`` to ``static_injector``;
@@ -633,6 +636,7 @@ Changelog
 
 .. _issue #1: https://github.com/oblalex/isotopic-logging/issues/1
 .. _issue #2: https://github.com/oblalex/isotopic-logging/issues/2
+.. _issue #3: https://github.com/oblalex/isotopic-logging/issues/3
 .. _issue #4: https://github.com/oblalex/isotopic-logging/issues/4
 .. _issue #5: https://github.com/oblalex/isotopic-logging/issues/5
 

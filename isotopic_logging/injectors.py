@@ -22,7 +22,8 @@ class DirectPrefixInjector(object):
             return time.time() - self.enter_time
 
     def mark(self, message):
-        return self.prefix + message
+        # Use `format` as it will automatically convert parameters to strings
+        return "{0}{1}".format(self.prefix, message)
 
 
 class StaticPrefixInjector(DirectPrefixInjector):

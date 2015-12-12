@@ -16,14 +16,14 @@ class DirectPrefixInjector(object):
         # `enter_time` will be set by context manager
         self.enter_time = None
 
+    def mark(self, message):
+        # Use `format` as it will automatically convert parameters to strings
+        return "{0}{1}".format(self.prefix, message)
+
     @property
     def elapsed_time(self):
         if self.enter_time:
             return time.time() - self.enter_time
-
-    def mark(self, message):
-        # Use `format` as it will automatically convert parameters to strings
-        return "{0}{1}".format(self.prefix, message)
 
 
 class StaticPrefixInjector(DirectPrefixInjector):

@@ -1,7 +1,6 @@
 [run]
 source = isotopic_logging
 omit =
-    isotopic_logging/_compat.py
     */features/*
     */tests/*
     */usr/*

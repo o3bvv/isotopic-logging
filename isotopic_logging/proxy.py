@@ -1,23 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
 from functools import wraps
-
-from ._compat import PY3, string_types
 
 
 _wrapped_method_names = {
-    name.lower()
-    for name in logging._nameToLevel.keys()
-} if PY3 else {
-    name.lower()
-    for name in logging._levelNames.keys()
-    if isinstance(name, string_types)
-}
-_wrapped_method_names.update({
+    'debug', 'info', 'warn', 'warning', 'error', 'fatal', 'critical',
     'exception',
-})
+}
 
 
 class LoggerProxy(object):

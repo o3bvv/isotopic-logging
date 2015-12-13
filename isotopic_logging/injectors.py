@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 import time
 
+from .defaults import ELAPSED_TIME_FORMAT
 from .generators import generate_oid
 from .prefix import make_prefix, join_prefix
 
@@ -24,6 +26,10 @@ class DirectPrefixInjector(object):
     def elapsed_time(self):
         if self.enter_time:
             return time.time() - self.enter_time
+
+    def format_elapsed_time(self, fmt=None):
+        dt = datetime.datetime.utcfromtimestamp(self.elapsed_time)
+        return dt.strftime(fmt or ELAPSED_TIME_FORMAT)
 
 
 class StaticPrefixInjector(DirectPrefixInjector):

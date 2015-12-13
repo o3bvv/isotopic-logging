@@ -46,6 +46,9 @@ class LoggerProxy(object):
     def elapsed_time(self):
         return self.injector.elapsed_time
 
+    def format_elapsed_time(self, fmt=None):
+        return self.injector.format_elapsed_time(fmt)
+
     def __getattr__(self, name):
         """
         Get attribute of original logger or wrapped version of methods used

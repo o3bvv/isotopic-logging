@@ -25,13 +25,13 @@ class DirectPrefixInjector(object):
 
     @property
     def elapsed_time(self):
-        if self.enter_time is None:
+        try:
+            return time.time() - self.enter_time
+        except TypeError:
             raise ValueError(
                 "Prefix injector '{injector}' is out of context, hence has no "
                 "elapsed time."
                 .format(injector=self))
-
-        return time.time() - self.enter_time
 
     def format_elapsed_time(self, fmt=None):
         dt = datetime.datetime.utcfromtimestamp(self.elapsed_time)

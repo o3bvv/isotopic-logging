@@ -24,6 +24,27 @@ class InjectionLocalStackTestCase(unittest.TestCase):
         while not self.stack.is_empty:
             self.stack.pop()
 
+    def test_push(self):
+        self.assertTrue(self.stack.is_empty)
+        self.stack.push(object())
+        self.assertFalse(self.stack.is_empty)
+
+    def test_pop(self):
+        item = object()
+        self.stack.push(item)
+        self.assertFalse(self.stack.is_empty)
+
+        result = self.stack.pop()
+        self.assertTrue(self.stack.is_empty)
+        self.assertIs(result, item)
+
+    def test_top(self):
+        self.assertIsNone(self.stack.top)
+
+        item = object()
+        self.stack.push(item)
+        self.assertIs(self.stack.top, item)
+
     def test_every_thread_has_own_stack(self):
         """
         Test every thread has own stack.

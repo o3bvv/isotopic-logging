@@ -69,7 +69,7 @@ class InjectionContext(object):
         self._old_enter_time, inj.enter_time = inj.enter_time, time.time()
         return inj
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type, value, traceback):
         item = _stack.top
 
         inj = item.injector

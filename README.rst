@@ -550,7 +550,7 @@ can use the power of partials:
 Changelog
 ---------
 
-* `1.1.0`_ (*pending*)
+* `2.0.0`_ (*pending*)
 
   * Feature: support nested prefixes (`issue #1`_).
   * Feature: simple and clean way to inject prefixes into calls to existing
@@ -640,6 +640,6 @@ Changelog
 .. _issue #4: https://github.com/oblalex/isotopic-logging/issues/4
 .. _issue #5: https://github.com/oblalex/isotopic-logging/issues/5
 
-.. _1.1.0: https://github.com/oblalex/isotopic-logging/compare/v1.0.1...v1.1.0
+.. _2.0.0: https://github.com/oblalex/isotopic-logging/compare/v1.0.1...v2.0.0
 .. _1.0.1: https://github.com/oblalex/isotopic-logging/compare/v1.0.0...v1.0.1
 .. _1.0.0: https://github.com/oblalex/isotopic-logging/releases/tag/v1.0.0

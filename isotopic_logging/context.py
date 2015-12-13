@@ -45,6 +45,8 @@ _stack = InjectionStack(_local)
 
 class InjectionContext(object):
 
+    _old_enter_time = None
+
     def __init__(self, injector, inherit=False):
         if _stack.is_empty:
             if callable(injector):
@@ -63,14 +65,18 @@ class InjectionContext(object):
         _stack.push(item)
 
     def __enter__(self):
-        injector = _stack.top.injector
-        injector.enter_time = time.time()
-        return injector
+        inj = _stack.top.injector
+        self._old_enter_time, inj.enter_time = inj.enter_time, time.time()
+        return inj
 
     def __exit__(self, type, value, traceback):
-        if _stack.top.parent is self:
-            item = _stack.pop()
-            item.injector.enter_time = None
+        item = _stack.top
+
+        inj = item.injector
+        inj.enter_time, self._old_enter_time = self._old_enter_time, None
+
+        if item.parent is self:
+            _stack.pop()
 
 
 def direct_injector(prefix, inherit=False):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import datetime
 import time
@@ -24,12 +25,23 @@ class DirectPrefixInjector(object):
 
     @property
     def elapsed_time(self):
-        if self.enter_time:
-            return time.time() - self.enter_time
+        if self.enter_time is None:
+            raise ValueError(
+                "Prefix injector '{injector}' is out of context, hence has no "
+                "elapsed time."
+                .format(injector=self))
+
+        return time.time() - self.enter_time
 
     def format_elapsed_time(self, fmt=None):
         dt = datetime.datetime.utcfromtimestamp(self.elapsed_time)
         return dt.strftime(fmt or ELAPSED_TIME_FORMAT)
+
+    def __repr__(self):
+        return """<{module}.{name}("{prefix}")>""".format(
+            module=self.__class__.__module__,
+            name=self.__class__.__name__,
+            prefix=self.prefix)
 
 
 class StaticPrefixInjector(DirectPrefixInjector):

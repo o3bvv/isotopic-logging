@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import calendar
+import time
 import unittest
 
 from itertools import cycle
+from freezegun import freeze_time
 
 from isotopic_logging.injectors import (
     DirectPrefixInjector, StaticPrefixInjector, AutoprefixInjector,
@@ -18,20 +21,63 @@ class InjectorTestCaseBase(unittest.TestCase):
         "bravo",
     ]
 
-    def assert_injector(self, injector, expected_strings):
+    def assert_mark(self, injector, expected_strings):
         result = list(map(injector.mark, self.strings))
         self.assertEqual(result, expected_strings)
 
 
 class DirectPrefixInjectorTestCase(InjectorTestCaseBase):
 
-    def test_injector(self):
+    def test_mark(self):
         injector = DirectPrefixInjector("foo > ")
         expected = [
             "foo > alpha",
             "foo > bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
+
+    def test_repr(self):
+        injector = DirectPrefixInjector("the_prefix")
+
+        actual = repr(injector)
+        expected = """<isotopic_logging.injectors.DirectPrefixInjector("the_prefix")>"""
+        self.assertEqual(actual, expected)
+
+    def test_elapsed_time_out_context(self):
+        injector = DirectPrefixInjector("prefix")
+        self.assertRaises(ValueError, lambda: injector.elapsed_time)
+
+    @freeze_time("2015-01-01 01:23:45.670000")
+    def test_elapsed_time(self):
+        injector = DirectPrefixInjector("prefix")
+
+        timetuple = time.strptime("2015-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+        injector.enter_time = calendar.timegm(timetuple)
+
+        actual = injector.elapsed_time
+        expected = 1 * 60 * 60 + 23 * 60 + 45.67
+        self.assertAlmostEqual(actual, expected, places=2)
+
+    @freeze_time("2015-01-01 01:23:45.670000")
+    def test_format_elapsed_time_default_format(self):
+        injector = DirectPrefixInjector("prefix")
+
+        timetuple = time.strptime("2015-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+        injector.enter_time = calendar.timegm(timetuple)
+
+        actual = injector.format_elapsed_time()
+        self.assertEqual(actual, "01:23:45.670000")
+
+    @freeze_time("2015-01-01 01:23:45.670000")
+    def test_format_elapsed_time_custom_format(self):
+        injector = DirectPrefixInjector("prefix")
+
+        timetuple = time.strptime("2015-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+        injector.enter_time = calendar.timegm(timetuple)
+
+        custom_format = "%H/%M/%S"
+        actual = injector.format_elapsed_time(custom_format)
+        self.assertEqual(actual, "01/23/45")
 
 
 class StaticPrefixInjectorTestCase(InjectorTestCaseBase):
@@ -42,7 +88,7 @@ class StaticPrefixInjectorTestCase(InjectorTestCaseBase):
             "foo | alpha",
             "foo | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     def test_delimiter_is_custom(self):
         injector = StaticPrefixInjector("foo", delimiter=":")
@@ -50,7 +96,7 @@ class StaticPrefixInjectorTestCase(InjectorTestCaseBase):
             "foo:alpha",
             "foo:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
 
 class AutoprefixInjectorTestCase(InjectorTestCaseBase):
@@ -62,14 +108,14 @@ class AutoprefixInjectorTestCase(InjectorTestCaseBase):
             "gen-1 | alpha",
             "gen-1 | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
         injector = AutoprefixInjector()
         expected = [
             "gen-2 | alpha",
             "gen-2 | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     def test_generator_is_custom(self):
         generator = cycle(["foo", "bar", ])
@@ -79,14 +125,14 @@ class AutoprefixInjectorTestCase(InjectorTestCaseBase):
             "foo | alpha",
             "foo | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
         injector = AutoprefixInjector(generator)
         expected = [
             "bar | alpha",
             "bar | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     @patch_default_generator
     def test_delimiter_is_custom(self):
@@ -95,7 +141,7 @@ class AutoprefixInjectorTestCase(InjectorTestCaseBase):
             "gen-1:alpha",
             "gen-1:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     def test_all_parameters_are_custom(self):
         generator = cycle(["foo", "bar", ])
@@ -105,14 +151,14 @@ class AutoprefixInjectorTestCase(InjectorTestCaseBase):
             "foo:alpha",
             "foo:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
         injector = AutoprefixInjector(generator, delimiter=':')
         expected = [
             "bar:alpha",
             "bar:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
 
 class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
@@ -124,14 +170,14 @@ class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
             "gen-1 | static | alpha",
             "gen-1 | static | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
         injector = HybrydPrefixInjector("static")
         expected = [
             "gen-2 | static | alpha",
             "gen-2 | static | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     def test_generator_is_custom(self):
         generator = cycle(["foo", "bar", ])
@@ -141,14 +187,14 @@ class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
             "foo | static | alpha",
             "foo | static | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
         injector = HybrydPrefixInjector("static", generator)
         expected = [
             "bar | static | alpha",
             "bar | static | bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     @patch_default_generator
     def test_delimiter_is_custom(self):
@@ -157,7 +203,7 @@ class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
             "gen-1:static:alpha",
             "gen-1:static:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
     def test_all_parameters_are_custom(self):
         generator = cycle(["foo", "bar", ])
@@ -167,14 +213,14 @@ class HybrydPrefixInjectorTestCase(InjectorTestCaseBase):
             "foo:static:alpha",
             "foo:static:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
         injector = HybrydPrefixInjector("static", generator, delimiter=':')
         expected = [
             "bar:static:alpha",
             "bar:static:bravo",
         ]
-        self.assert_injector(injector, expected)
+        self.assert_mark(injector, expected)
 
 
 @patch_default_generator

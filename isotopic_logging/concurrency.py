@@ -6,7 +6,7 @@ import threading
 class threadsafe_iter(object):
     """
     Takes an iterator/generator and makes it thread-safe by serializing call to
-    the `next` method of given iterator/generator.
+    the ``next`` method of given iterator/generator.
     """
 
     def __init__(self, original):
@@ -20,5 +20,5 @@ class threadsafe_iter(object):
         with self.lock:
             return next(self.original)
 
-    def next(self):
-        return self.__next__()
+    # Python 3 compatibility
+    next = __next__

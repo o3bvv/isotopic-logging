@@ -3,4 +3,4 @@ mock
 nose
 nose-cov
 PyHamcrest
-six
+six>=1.9

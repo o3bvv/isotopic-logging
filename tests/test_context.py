@@ -1,15 +1,65 @@
 # -*- coding: utf-8 -*-
 
 import itertools
+import threading
 import unittest
 
+from six.moves import range
+
 from isotopic_logging.context import (
-    InjectionContext, direct_injector, static_injector, auto_injector,
-    hybrid_injector,
+    InjectionContext, InjectionLocalStack, direct_injector, static_injector,
+    auto_injector, hybrid_injector,
 )
 from isotopic_logging.injectors import AutoprefixInjector
 
 from .utils import patch_default_generator
+
+
+class InjectionLocalStackTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.stack = InjectionLocalStack()
+
+    def tearDown(self):
+        while not self.stack.is_empty:
+            self.stack.pop()
+
+    def test_every_thread_has_own_stack(self):
+        """
+        Test every thread has own stack.
+
+        Steps:
+        - Check that current thread has empty context.
+        - Put an identifier of main thread to stack.
+        - Run several threads and check that each one has got an empty local
+          stack.
+        - Put an item identifying thread into local stack.
+        - Wait for threads to finish.
+        - Ensure stack in the main thread has no changes.
+        """
+
+        def worker():
+            self.assertTrue(self.stack.is_empty)
+            self.stack.push(threading.current_thread().name)
+
+        def run_subthreads():
+            threads = []
+
+            for i in range(10):
+                t = threading.Thread(target=worker)
+                threads.append(t)
+                t.start()
+
+            for t in threads:
+                if t.is_alive():
+                    t.join()
+
+        worker()
+        run_subthreads()
+
+        self.assertIs(self.stack.top, threading.current_thread().name)
+        self.stack.pop()
+        self.assertTrue(self.stack.is_empty)
 
 
 class InjectionContextTestCase(unittest.TestCase):

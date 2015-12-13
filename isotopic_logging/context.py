@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import time
+import threading
 
 from collections import deque, namedtuple
-from threading import local
 
 from .injectors import (
     DirectPrefixInjector, StaticPrefixInjector, AutoprefixInjector,
@@ -12,35 +12,34 @@ from .injectors import (
 from .injectors import merge_injectors
 
 
-StackItem = namedtuple('StackItem', ['injector', 'parent', ])
+StackItem = namedtuple('StackItem', ('injector', 'parent', ))
 
 
-class InjectionStack(object):
+class InjectionLocalStack(threading.local):
 
-    def __init__(self, local):
-        local.stack = deque()
-        self._local = local
+    def __init__(self):
+        self._container = deque()
+        super(InjectionLocalStack, self).__init__()
 
     def push(self, item):
-        self._local.stack.append(item)
+        self._container.append(item)
 
     def pop(self):
-        return self._local.stack.pop()
+        return self._container.pop()
 
     @property
     def top(self):
         try:
-            return self._local.stack[-1]
+            return self._container[-1]
         except IndexError:
             return None
 
     @property
     def is_empty(self):
-        return not self._local.stack
+        return not self._container
 
 
-_local = local()
-_stack = InjectionStack(_local)
+_stack = InjectionLocalStack()
 
 
 class InjectionContext(object):

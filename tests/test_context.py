@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import itertools
+import time
 import threading
 import unittest
 
@@ -324,3 +325,18 @@ class InjectionContextFactoriesTestCase(unittest.TestCase):
 
         operation()
         self.assertEqual(expected, results)
+
+    def test_elapsed_time_is_preserved_and_relevant_only_to_current_scope(self):
+        with auto_injector() as inj1:
+            time.sleep(0.1)
+
+            with auto_injector() as inj2:
+                time.sleep(0.1)
+
+                with auto_injector(inherit=True) as inj3:
+                    time.sleep(0.1)
+                    self.assertAlmostEqual(inj3.elapsed_time, 0.1, 1)
+
+                self.assertAlmostEqual(inj2.elapsed_time, 0.2, 1)
+
+            self.assertAlmostEqual(inj1.elapsed_time, 0.3, 1)

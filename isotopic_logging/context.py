@@ -7,7 +7,7 @@ from collections import deque, namedtuple
 
 from .injectors import (
     DirectPrefixInjector, StaticPrefixInjector, AutoprefixInjector,
-    HybrydPrefixInjector,
+    HybridPrefixInjector,
 )
 from .injectors import merge_injectors
 
@@ -98,5 +98,5 @@ def auto_injector(oid_generator=None, delimiter=None, inherit=False):
 
 def hybrid_injector(prefix, oid_generator=None, delimiter=None, inherit=False):
     return InjectionContext(
-        lambda: HybrydPrefixInjector(prefix, oid_generator, delimiter),
+        lambda: HybridPrefixInjector(prefix, oid_generator, delimiter),
         inherit)

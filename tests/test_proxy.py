@@ -40,6 +40,14 @@ class LoggerProxyTestCase(unittest.TestCase):
         actual = self.testee.format_elapsed_time()
         self.assertEqual(actual, "01:23:45.670000")
 
+    def test_proxy_plain_attribute(self):
+        self.assertNotIn("log", self.testee.__dict__)
+        self.testee.log(logging.DEBUG, "raw debug")
+        self.patched_log.assert_called_with(
+            logging.DEBUG, "raw debug", (),
+        )
+        self.assertNotIn("log", self.testee.__dict__)
+
     def test_proxy_default_logging_methods(self):
         method_names = [
             'debug', 'info', 'warn', 'warning', 'error', 'fatal', 'critical',
@@ -62,11 +70,3 @@ class LoggerProxyTestCase(unittest.TestCase):
             logging.ERROR, "proxy test | exception", (), exc_info=1,
         )
         self.assertIn("exception", self.testee.__dict__)
-
-    def test_proxy_plain_attribute(self):
-        self.assertNotIn("log", self.testee.__dict__)
-        self.testee.log(logging.DEBUG, "raw debug")
-        self.patched_log.assert_called_with(
-            logging.DEBUG, "raw debug", (),
-        )
-        self.assertNotIn("log", self.testee.__dict__)

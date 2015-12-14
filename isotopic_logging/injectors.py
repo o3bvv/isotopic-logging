@@ -58,12 +58,12 @@ class AutoprefixInjector(StaticPrefixInjector):
         super(AutoprefixInjector, self).__init__(autopart, delimiter)
 
 
-class HybrydPrefixInjector(DirectPrefixInjector):
+class HybridPrefixInjector(DirectPrefixInjector):
 
     def __init__(self, prefix, oid_generator=None, delimiter=None):
         autopart = generate_oid(oid_generator)
         prefix = join_prefix([autopart, prefix, ], delimiter)
-        super(HybrydPrefixInjector, self).__init__(prefix)
+        super(HybridPrefixInjector, self).__init__(prefix)
 
 
 def merge_injectors(*args):

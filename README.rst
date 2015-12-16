@@ -23,17 +23,26 @@ Synopsis
 to track separate operations and their parts within whole execution flow. This
 is done by injecting operation prefixes at the beginning of log messages.
 
-It comes very useful when you have a single log stream, which is populated by
-parrallel sources (threads or processes), and you need to detect flow of a
-single operation in a mess of interweaving log messages and to distinguish
-different instances of the same operation.
+This library was born in depths of real projects which have web applications
+and background task queues, each of which can have multiple workers. There are
+two key points this library resolves:
+
+- As administrator I want to have log entries marked with same prefix
+  within single operation so that I can distinguish and track operations even
+  if log is written from multiple threads or sources.
+- As developer I want to store prefix in some context so that I do not need
+  to format it per each call to logger and so that I can access it within
+  nested function calls without passing prefix to a function directly and
+  screwing up its semantics.
+
+``isotopic-logging`` comes very useful when you have a single log stream, which
+is populated from parrallel sources (threads or processes), and you need to
+detect flow of a single operation in a mess of interweaving log messages and to
+distinguish different instances of the same operation.
 
 The library can be useful for single-process and single-thread applications as
-well. You may still need to detect operations and track their execution time.
-
-This library was created on demand of real projects which have web applications
-running and background task queues, each of which can have multiple workers per
-single node.
+well. You may still need to detect operations and track their execution time
+and you can do it well.
 
 
 Quick output example
@@ -69,6 +78,7 @@ different functions running in different threads or processes. And they do not
 need to remember and pass logging prefixes from one to another which keeps you
 focused on development process and prevents you from distracting by log message
 formatting.
+
 
 
 Changelog

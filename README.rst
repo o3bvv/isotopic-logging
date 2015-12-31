@@ -97,11 +97,11 @@ Work of this library is based on several key concepts:
 
 - Prefix injectors: they store or/and generate prefixes and inject them into
   strings.
-- Injection contexts: they manage injectors (get or create them), track scope
+- Injection contexts: they manage injectors (get or create them) and track
+  scope execution time.
+- Injection scopes: they drive creation of injectors and bound operation
   execution time.
-- Injection scopes: they manage visibility of injectors and bound operation
-  execution time.
-- Logger wrapper: culmination of other concepts. Wraps loggers providing
+- Logger wrapper: culmination of other concepts. Wraps loggers and provides
   methods for creation of injection contexts.
 
 These concepts may be used separately or as a whole combination in form of
@@ -332,7 +332,104 @@ Examples:
 Injection scopes
 ----------------
 
-TODO:
+Scopes are created by contexts and they are used to drive creation of
+injectors. There are two kinds of scopes: top-level and nested. Nested scopes
+allow inheritance of prefixes.
+
+Let's look at examples to grab the idea.
+
+
+Nested scopes
+~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  from isotopic_logging.context import auto_injector, hybrid_injector
+
+  def helper():
+      with auto_injector() as inj:
+          print(inj.mark("call from helper"))
+
+  def operation():
+      with hybrid_injector("operation") as inj:
+          print(inj.mark("start"))
+          helper()
+          print(inj.mark("end"))
+
+Here we separate ``helper`` and ``operation`` functions. Both of them define
+own scopes via context managers.
+
+If ``helper`` is called directly, it's scope will be *top-level* and new
+injector will be created for each call:
+
+.. code-block:: python
+
+  helper()
+  ED5ED5 | call from helper
+  helper()
+  14F7CE | call from helper
+
+If ``helper`` will be called from ``operation``, it's scope will become
+*nested* and it will reuse injector created within top-level scope:
+
+.. code-block:: python
+
+  operation()
+  A15324 | operation | start
+  A15324 | operation | call from helper
+  A15324 | operation | end
+
+In this case ``inj`` in ``operation`` and ``inj`` in ``helper`` will be exactly
+the same object.
+
+
+Inherited scopes
+~~~~~~~~~~~~~~~~
+
+Nested scopes are good if they are used within reusable helpers, utils, etc.,
+especially if they are small. If nested calls present some complex operations,
+you may want to separate them with own prefixes, but preserve parent prefix.
+
+You can inherit current prefix to do so:
+
+.. code-block:: python
+
+  from isotopic_logging.context import (
+      auto_injector, static_injector, hybrid_injector,
+  )
+
+  def helper():
+      with auto_injector() as inj:
+          print(inj.mark("call from helper"))
+
+  def suboperation():
+      with static_injector("suboperation", inherit=True) as inj:
+          print(inj.mark("start"))
+          helper()
+          print(inj.mark("end"))
+
+  def operation():
+      with hybrid_injector("operation") as inj:
+          print(inj.mark("start"))
+          suboperation()
+          print(inj.mark("end"))
+
+  operation()
+  9F3A34 | operation | start
+  9F3A34 | operation | suboperation | start
+  9F3A34 | operation | suboperation | call from helper
+  9F3A34 | operation | suboperation | end
+  9F3A34 | operation | end
+
+Here, ``suboperation`` uses ``static_injector`` with flag ``inherit=True``.
+This creates new injector, which is a combination of parent prefix and given
+static prefix. ``suboperation`` also calls ``helper`` which creates nested
+injection scope, as in the previous example.
+
+So, as you can see, one of the main benefits of the library is prefix
+transmission between separated functions. In couple with prefix management,
+this keeps API of your functions and their bodies clean, saves your time and
+mental focus.
 
 
 Logger wrapper
@@ -347,12 +444,18 @@ Time tracking
 TODO:
 
 
+Transmission of prefixes between threads or processes
+-----------------------------------------------------
+
+TODO:
+
+
 Changelog
 ---------
 
 * `2.0.0`_ (*pending*)
 
-  * Feature: support nested prefixes (`issue #1`_).
+  * Feature: support inherited prefixes (`issue #1`_).
   * Feature: simple and clean way to inject prefixes into calls to existing
     loggers (`issue #4`_).
   * Feature: ability to get context execution time (`issue #3`_).
@@ -432,7 +535,11 @@ Changelog
 .. _Cheese Shop: https://pypi.python.org/pypi/isotopic-logging
 .. _Isotopic labeling: http://en.wikipedia.org/wiki/Isotopic_labeling
 
-.. _OID_LENGTH: https://github.com/oblalex/isotopic-logging/blob/master/isotopic_logging/defaults.py#L3
+
+.. _2.0.0: https://github.com/oblalex/isotopic-logging/compare/v1.0.1...v2.0.0
+.. _1.0.1: https://github.com/oblalex/isotopic-logging/compare/v1.0.0...v1.0.1
+.. _1.0.0: https://github.com/oblalex/isotopic-logging/releases/tag/v1.0.0
+
 
 .. _issue #1: https://github.com/oblalex/isotopic-logging/issues/1
 .. _issue #2: https://github.com/oblalex/isotopic-logging/issues/2
@@ -440,6 +547,3 @@ Changelog
 .. _issue #4: https://github.com/oblalex/isotopic-logging/issues/4
 .. _issue #5: https://github.com/oblalex/isotopic-logging/issues/5
 
-.. _2.0.0: https://github.com/oblalex/isotopic-logging/compare/v1.0.1...v2.0.0
-.. _1.0.1: https://github.com/oblalex/isotopic-logging/compare/v1.0.0...v1.0.1
-.. _1.0.0: https://github.com/oblalex/isotopic-logging/releases/tag/v1.0.0

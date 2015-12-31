@@ -484,7 +484,63 @@ autoprefix.
 Time tracking
 -------------
 
-TODO:
+Prefix injectors allow you to track execution time within scopes. They provide:
+
+- ``elapsed_time`` attribute, which counts elapsed_time in seconds;
+- and ``format_elapsed_time()`` method, which can accept custom format to
+  output elapsed time as a string.
+
+Examples:
+
+.. code-block:: python
+
+  import time
+  from isotopic_logging import auto_injector
+
+  with auto_injector() as inj:
+      time.sleep(0.1)
+      print(inj.elapsed_time)
+
+  # 0.105129003525
+
+Nested and inherited scopes have own internal time tracking:
+
+.. code-block:: python
+
+  with auto_injector() as inj1:
+      time.sleep(0.1)
+
+      with auto_injector() as inj2:
+          time.sleep(0.1)
+          print("inj2", inj2.elapsed_time)
+
+      print("inj1", inj1.elapsed_time)
+
+  # ('inj2', 0.10514497756958008)
+  # ('inj1', 0.2101149559020996)
+
+Default formatting outputs hours, minutes, seconds and microseconds:
+
+.. code-block:: python
+
+  with auto_injector() as inj:
+      time.sleep(0.1)
+      print(inj.format_elapsed_time())
+
+  # 00:00:00.105154
+
+You can use custom format compatible with format of
+``datetime.datetime.strftime()``:
+
+.. code-block:: python
+
+  format = "%H/%M/%S"
+
+  with auto_injector() as inj:
+      time.sleep(5)
+      print(inj.format_elapsed_time(format))
+
+  # 00/00/05
 
 
 Transmission of prefixes between threads or processes

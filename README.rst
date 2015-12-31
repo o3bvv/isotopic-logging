@@ -435,7 +435,50 @@ mental focus.
 Logger wrapper
 --------------
 
-TODO:
+``isotopic_logging`` allows you to wrap your loggers to prevent you from typing
+``inj.mark()`` every time you put some message to log. This saves space for
+code and makes it more readable.
+
+Wrapping is done via ``isotopic_logging.IsotopicLogger`` logger wrapper. It
+wraps loggers which are instances of ``logging.Logger`` and its subclasses.
+
+Wrapper provides methods for creation of logger proxies with predefined prefix
+injectors:
+
+- ``direct()`` for ``DirectPrefixInjector``;
+- ``static()`` for ``StaticPrefixInjector``;
+- ``auto()`` for ``AutoprefixInjector``;
+- ``hybrid()`` for ``HybridPrefixInjector``.
+
+These methods accept same parameters as proper injection context managers. They
+return contex managers for getting logger proxies. Proxies act as usual loggers
+and they wrap logging calls with specific prefix.
+
+Example:
+
+.. code-block:: python
+
+  import logging
+
+  from isotopic_logging import IsotopicLogger
+
+  LOG = IsotopicLogger(logging.getLogger(__name__))
+
+  with LOG.auto() as log:
+      log.debug("debug message")
+      log.info("info message")
+      log.warning("warning message")
+      log.error("error message")
+      log.critical("critical message")
+
+  # DEBUG    [2015-12-31 13:38:55,554] 4B9FB5 | debug message
+  # INFO     [2015-12-31 13:38:55,554] 4B9FB5 | info message
+  # WARNING  [2015-12-31 13:38:55,554] 4B9FB5 | warning message
+  # ERROR    [2015-12-31 13:38:55,554] 4B9FB5 | error message
+  # CRITICAL [2015-12-31 13:38:55,554] 4B9FB5 | critical message
+
+Here, ``LOG.auto()`` produces context which creates logger proxy with injected
+autoprefix.
 
 
 Time tracking

@@ -487,8 +487,8 @@ Time tracking
 Prefix injectors allow you to track execution time within scopes. They provide:
 
 - ``elapsed_time`` attribute, which counts elapsed_time in seconds;
-- and ``format_elapsed_time()`` method, which can accept custom format to
-  output elapsed time as a string.
+- ``format_elapsed_time()`` method, which can accept custom format to output
+  elapsed time as a string.
 
 Examples:
 

@@ -365,9 +365,9 @@ injector will be created for each call:
 .. code-block:: python
 
   helper()
-  ED5ED5 | call from helper
+  # ED5ED5 | call from helper
   helper()
-  14F7CE | call from helper
+  # 14F7CE | call from helper
 
 If ``helper`` will be called from ``operation``, it's scope will become
 *nested* and it will reuse injector created within top-level scope:
@@ -375,9 +375,9 @@ If ``helper`` will be called from ``operation``, it's scope will become
 .. code-block:: python
 
   operation()
-  A15324 | operation | start
-  A15324 | operation | call from helper
-  A15324 | operation | end
+  # A15324 | operation | start
+  # A15324 | operation | call from helper
+  # A15324 | operation | end
 
 In this case ``inj`` in ``operation`` and ``inj`` in ``helper`` will be exactly
 the same object.
@@ -415,11 +415,11 @@ You can inherit current prefix to do so:
           print(inj.mark("end"))
 
   operation()
-  9F3A34 | operation | start
-  9F3A34 | operation | suboperation | start
-  9F3A34 | operation | suboperation | call from helper
-  9F3A34 | operation | suboperation | end
-  9F3A34 | operation | end
+  # 9F3A34 | operation | start
+  # 9F3A34 | operation | suboperation | start
+  # 9F3A34 | operation | suboperation | call from helper
+  # 9F3A34 | operation | suboperation | end
+  # 9F3A34 | operation | end
 
 Here, ``suboperation`` uses ``static_injector`` with flag ``inherit=True``.
 This creates new injector, which is a combination of parent prefix and given

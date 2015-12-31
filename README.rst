@@ -543,10 +543,31 @@ You can use custom format compatible with format of
   # 00/00/05
 
 
-Transmission of prefixes between threads or processes
------------------------------------------------------
+Interthread prefix transmission
+-------------------------------
 
-TODO:
+Sometimes you may need to pass operation prefix between threads or processes.
+For example, you start operation by handling HTTP request and continue it in
+a background worker.
+
+This can be easily made by using injector's ``prefix`` attribute and
+``DirectPrefixInjector``:
+
+.. code-block:: python
+
+  def suboperation_in_another_thread_or_process(parent_prefix):
+      with direct_injector(parent_prefix) as inj:
+          print(inj.mark("foo"))
+
+  def operation():
+      with auto_injector() as inj:
+          print(inj.mark("foo"))
+          suboperation_in_another_thread_or_process(inj.prefix)
+
+  operation()
+
+  # 3539DB | foo
+  # 3539DB | foo
 
 
 Changelog

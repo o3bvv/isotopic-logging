@@ -573,7 +573,7 @@ This can be easily made by using injector's ``prefix`` attribute and
 Changelog
 ---------
 
-* `2.0.0`_ (*pending*)
+* `2.0.0`_ (Dec 31, 2015)
 
   * Feature: support inherited prefixes (`issue #1`_).
   * Feature: simple and clean way to inject prefixes into calls to existing

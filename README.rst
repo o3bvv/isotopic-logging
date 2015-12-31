@@ -36,7 +36,7 @@ two key points this library resolves:
   screwing up its semantics.
 
 ``isotopic-logging`` comes very useful when you have a single log stream, which
-is populated from parrallel sources (threads or processes), and you need to
+is populated from parallel sources (threads or processes), and you need to
 detect flow of a single operation in a mess of interweaving log messages and to
 distinguish different instances of the same operation.
 
@@ -73,17 +73,17 @@ For example, log of a single complex operation may look like this:
   INFO     [2015-12-15 21:47:27,013] D6EF95 | Heavy task has finished, elapsed time: 00:23:11.004120.
 
 
-Important thing to note: each line of the example above may be logged in by
-different functions running in different threads or processes. And they do not
-need to remember and pass logging prefixes from one to another which keeps you
-focused on development process and prevents you from distracting by log message
-formatting.
+Important thing to note: each line of the example log from above may be
+produced by different functions running in different threads or processes. And
+they do not need to remember and pass logging prefixes from one to another
+which keeps you focused on development process and prevents you from
+distracting by log message formatting.
 
 
 Installation
 ------------
 
-To install the library simply get at `Cheese Shop`_ (PyPI):
+To install the library simply get it at `Cheese Shop`_ (PyPI):
 
 .. code-block:: bash
 
@@ -95,17 +95,17 @@ Key concepts
 
 Work of this library is based on several key concepts:
 
-- Prefix injectors: store or/and generate prefixes and inject them into
+- Prefix injectors: they store or/and generate prefixes and inject them into
   strings.
-- Injection contexts: manages injectors (gets or creates them), tracks scope
+- Injection contexts: they manage injectors (get or create them), track scope
   execution time.
-- Injection scopes: scopes within injectors are visible and within time is
-  tracked.
+- Injection scopes: they manage visibility of injectors and bound operation
+  execution time.
 - Logger wrapper: culmination of other concepts. Wraps loggers providing
   methods for creation of injection contexts.
 
 These concepts may be used separately or as a whole combination in form of
-logger wrapper. Such approach is useful for customization.
+logger wrapper. Such approach is useful for flexible customization.
 
 
 Prefix injectors
@@ -167,7 +167,7 @@ Autoprefix injector
 ~~~~~~~~~~~~~~~~~~~
 
 ``AutoprefixInjector`` works like ``StaticPrefixInjector``, but it generates
-prefixed by itself.
+prefixes by itself.
 
 Generally it is used to distinguish different instances of same operations or
 different calls to same methods and so on.
@@ -213,7 +213,7 @@ You can use custom generator:
   # "bar | message"
 
 
-If you sure you need custom generator, you must ensure that it's threadsafe.
+If you are sure you need custom generator, you must ensure that it's threadsafe.
 You can use ``isotopic_logging.concurrency.threadsafe_iter`` for this:
 
 .. code-block:: python
@@ -283,7 +283,50 @@ This prefix injector also supports custom delimiter and generator:
 Injection contexts
 ------------------
 
-TODO:
+Injection contexts are used for scope management. Scopes are described in
+the next section.
+
+Contexts are responsible for providing you with proper injectors. Injectors are
+created on demand. Generally, this can be described as:
+
+- "Give me *current injector* or create new specific one if there is no *current injector*"
+- or "Create new injector inherited from *current one* despite anything".
+
+Contexts orginize injectors into stacks. Stacks are thread-local and do not
+interfere with each other. There is no limit for stack size. This should not be
+a problem, because injectors are created lazily. This happens only if stack is
+empty or if you explicitly want to inherit current prefix (usually to
+distinguish suboperation).
+
+*Current injector* is the injector on top of the stack in current thread.
+
+Injection context managers are defined in ``isotopic_logging.context`` module.
+There is a proper context manager for each type of prefix injector. Context
+managers accept accept same arguments as injectors which they are going to
+produce.
+
+Examples:
+
+.. code-block:: python
+
+  from isotopic_logging.context import direct_injector, static_injector
+  from isotopic_logging.context import auto_injector, hybrid_injector
+
+  with direct_injector("foo > ") as inj:
+      inj.mark("message")
+      # "foo > message"
+
+  with static_injector("foo") as inj:
+      inj.mark("message")
+      # "foo | message"
+
+  with auto_injector() as inj:
+      inj.mark("message")
+      # "25EBB8 | message"
+
+  with hybrid_injector("static") as inj:
+      inj.mark("message")
+      # "0F9A8F | static | message"
 
 
 Injection scopes
@@ -294,6 +337,12 @@ TODO:
 
 Logger wrapper
 --------------
+
+TODO:
+
+
+Time tracking
+-------------
 
 TODO:
 
@@ -311,7 +360,7 @@ Changelog
     defined (`issue #5`_).
   * Improvement: ensure prefix and target message are converted to strings
     during concatenation.
-  * Renaming:
+  * Renamings:
 
     - ``prefix_injector`` to ``static_injector``;
     - ``autoprefix_injector`` to ``auto_injector``;
